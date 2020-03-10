@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel ="stylesheet" href="index.css">
+        <script src="test.js"></script>
+
+        <title>welcome to automata </title>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-dark bg-dark" id="nav">
+            <a color="white">CISC 475</a>
+            
+            
+            <div class="dropdown">
+                <button onclick="f()" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Menu
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#">save</a>
+                <a class="dropdown-item" href="#">upload</a>
+                </div>
+            </div>
+        </nav>
+
+        <div id="canvas_div">
+            <canvas id="myCanvas" width="500px" height="400px" style="border:1px solid #000000;">
+            </canvas>
+        </div>
+
+        <div id="button_div">
+            <button type="button" onclick="addState()" class="btn btn-dark">add state</button>
+            <button type="button" onclick="addLine()" class="btn btn-dark">connect states</button>
+            <button type="button" class="btn btn-danger">delete</button>
+        </div>
+    </body>
+</html>
