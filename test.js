@@ -1,15 +1,55 @@
+//assign a canvas variable
+var canvas = document.querySelector("canvas");
+console.log(canvas);
 
-//does not work at the moment but should get mouse position
-var canvas = document.getElementById('myCanvas');
-if(canvas)
-    canvas.addEventListener('onlick', clickLocation, false);
+//set the height and width of the canvas
+canvas.width = window.innerWidth*.999;
+canvas.height=window.innerHeight*.8;
 
-function clickLocation(canvas,event)
+//array to hold all the states
+var states=[];
+
+ 
+var context = canvas.getContext('2d');
+
+//to creat a path, you do:
+// context.beginPath();
+// context.moveTo(100,100);
+// context.lineTo(300,300);
+// context.stroke();
+
+function addState()
 {
-    console.log("clicked");
+    console.log("button clicked");
+    var x=0;
+
+    function clickPosition(canvas, event) { 
+        let rect = canvas.getBoundingClientRect(); 
+        let x = event.clientX - rect.left; 
+        let y = event.clientY - rect.top;
+        var c= canvas.getContext('2d'); 
+    
+        c.beginPath();
+        c.arc(x,y,30,0,360,false);
+        c.stroke();
+
+        c.beginPath();
+        c.arc(x,y,30,0,360,false);
+        c.stroke();
+    
+        console.log("Coordinate x: " + x, "Coordinate y: " + y); 
+    } 
+
+    canvas.addEventListener("mousedown", function(e) 
+    { 
+        clickPosition(canvas, e); 
+        //document.addEventListener("mouseup",mouseUp);
+    }); 
+
 }
 
-//this function gets invoked when 2 states are clicked and draws a path between them
+
+
 function addLine()
 {
     var c = document.getElementById("myCanvas");
@@ -19,14 +59,5 @@ function addLine()
     ctx.stroke();
     console.log("clicked");
 }
-
-//this fucntion is invoked when the add state button is clicked
-//should call get mouse click position to add state those coordinates
-function addState()
-{
-    var c= document.getElementById("myCanvas");
-    var ctx = c.getContext("2d");
-}
-
 
 

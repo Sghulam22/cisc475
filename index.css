@@ -2,24 +2,15 @@
     color:white;
 }
 
-/* html, body {
-    height: 100%;
-    margin: 0px;
-} */
-
-#canvas_div{
-    height: 500px;
-    width: 100%;  
-    border:1px solid blue ; 
-   
+body{
+    margin: 0;
 }
 
 #myCanvas{
-    
     border:1px solid #000000;
 }
 
 #button_div{
     margin-left: 35%;
     margin-top: 1%;
-}
+} 
