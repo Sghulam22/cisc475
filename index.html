@@ -4,7 +4,7 @@
         
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel ="stylesheet" href="index.css">
-        <script src="test.js"></script>
+        
 
         <title>welcome to automata </title>
     </head>
@@ -13,9 +13,10 @@
         <nav class="navbar navbar-dark bg-dark" id="nav">
             <a color="white">CISC 475</a>
             <div id="button_div">
-                <button type="button" onclick="addState()" class="btn btn-dark">add state</button>
-                <button type="button" onclick="addLine()" class="btn btn-dark">connect states</button>
-                <button type="button" class="btn btn-danger">delete</button>
+                <button id="addState" type="button" onclick="addState()" class="btn btn-dark">add state</button>
+                <button type="button" onclick="saveFile()" class="btn btn-dark">save file</button>
+                <button type="button" onclick="addLine()" class="btn btn-dark">open file</button>
+                <button type="button" onclick="clearCanvas()"class="btn btn-danger">delete</button>
             </div>
             
             <div class="dropdown">
@@ -28,10 +29,8 @@
                 </div>
             </div>
         </nav>
-
-        <div id="canvas_div">
             <canvas id="myCanvas"></canvas>
-        </div>
+            <script src="test.js"></script>
 
    
     </body>
