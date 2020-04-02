@@ -11,6 +11,8 @@ canvas.height=window.innerHeight*.8;
 //array to hold all the states and paths
 var states = [];
 var Paths = []
+var clicked=[]; //holds the click position for connecting states
+var t=0; //click counter
 
 var context = canvas.getContext('2d');
 
@@ -19,9 +21,13 @@ function clearCanvas()
 {
     states = [];
     paths = [];
+    clicked =[];
+    t = 0;
     Statenum=0;
     context.clearRect(0,0,canvas.width,canvas.height);  
 }
+
+
 
 //function gets called when the button "add state gets clicked"
 //calls click positition function
@@ -35,15 +41,7 @@ function addState()
     }, {once : true});
 
 }
-// function overlap(x1,y1,x2,y2)
-// {
-//     if(Math.abs(x1-x2)<70 && Math.abs(y1-y2)<700 && sts)
-//     {
-//         return true;
-//     }
-//     else
-//         return false;
-// }
+
 
 function clickPosition(canvas, event) { 
 
@@ -53,25 +51,8 @@ function clickPosition(canvas, event) {
     var c= canvas.getContext('2d'); 
     var result;
 
-    // for(var i=0; i<states.length; i++)
-    // {
-    //     var placeable = overlap(states.xpos, x, states.ypos, y);
+   
 
-    //     if(placeable === true)
-    //     {
-    //         result = 0;
-    //     }
-
-    //     else if(placeable === false)
-    //     {
-    //         result = 1;
-    //     }
-    // }
-  
-    // if(result === 1)
-    // {
-
-    
     //draws and darkens the circle by over writing it twice
     for(var i=0; i<2; i++)
     {
@@ -125,17 +106,14 @@ function clickPosition(canvas, event) {
 } 
 
 
-var t=0; //click counter
-var clicked=[]; //holds the mouse click positions
-
 function saveFile()
 {
-     
+     alert("save file");
 }
 
 function openFile()
 {
-
+    alert("open file");
 }
 
 //function that checks hit detection
@@ -168,7 +146,11 @@ function hitDetection(){
 
         if(t===2)
         {
+            var input = window.prompt("enter their relation","");
+            console.log(input);
+
             var path = {
+                "relation":input,
                 "x1": clicked[0].xpos,
                 "y1": clicked[0].ypos,
                 "x2": clicked[1].xpos,
@@ -176,13 +158,30 @@ function hitDetection(){
             }
             
             Paths.push(path);
-
             ctx.moveTo(clicked[0].xpos, clicked[0].ypos);
             ctx.lineTo(clicked[1].xpos, clicked[1].ypos);
             ctx.stroke();
             console.log("clicked");
             t=0;
+            
+
+            var tempx = (clicked[0].xpos + clicked[1].xpos) / 2;
+            var tempy = (clicked[0].ypos + clicked[1].ypos) / 2;
+            var dx = Math.abs(clicked[0].xpos - clicked[1].xpos);
+            var dy = Math.abs(clicked[0].ypos - clicked[1].ypos);
+
+            if(dx > dy)
+                tempy = tempy-20;
+
+            if(dy > dx)
+                tempx = tempx -50;
+
+            context.font = "20px Arial";
+            
+            context.fillText(input, tempx, tempy);
+            console.log(input);     
             clicked=[];
+
         }
 
     });
