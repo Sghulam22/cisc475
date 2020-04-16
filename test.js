@@ -10,6 +10,7 @@ canvas.height=window.innerHeight*.8;
 
 //array to hold all the states and paths
 var states = [];
+var acceptStates =[];
 var Paths = []
 var clicked=[]; //holds the click position for connecting states
 var t=0; //click counter
@@ -29,57 +30,88 @@ function clearCanvas()
 
 
 
-//function gets called when the button "add state gets clicked"
-//calls click positition function
+//function gets called when the button "add state" gets clicked
 function addState()
 {
     document.getElementById("addState").disabled = true;
-    console.log("add state");
+    document.getElementById("addAcceptState").disabled = true;
     canvas.addEventListener("mousedown", function(e) 
     { 
-        clickPosition(canvas, e); 
+        clickPosition(canvas, e, 0); 
+    }, {once : true});
+}
+
+//function that gets called when the button "add accept state" gets clicked
+function addAcceptState()
+{
+    document.getElementById("addAcceptState").disabled = true;
+    document.getElementById("addState").disabled = true;
+    canvas.addEventListener("mousedown", function(e) 
+    { 
+        clickPosition(canvas, e, 1); 
     }, {once : true});
 
 }
 
+//function
+function drawState(x, y, r)
+{
+    var c= canvas.getContext('2d'); 
+    c.beginPath();
+    c.arc(x,y,r,0,360,false);
+    c.stroke();
+}
 
-function clickPosition(canvas, event) { 
+//function that takes parameters x,y,r and draws 2 circles: one inside the other to mimick accept state
+function drawAcceptState(x, y, r)
+{
+    var c= canvas.getContext('2d'); 
+    c.beginPath();
+    c.arc(x,y,r,0,360,false);
+    c.stroke();
+
+    c.beginPath();
+    c.arc(x,y,r+5,0,360,false);
+    c.stroke();
+}
+
+
+function clickPosition(canvas, event, statetype) { 
 
     let rect = canvas.getBoundingClientRect(); 
     let x = event.clientX - rect.left; 
     let y = event.clientY - rect.top;
-    var c= canvas.getContext('2d'); 
-    var result;
 
-   
 
     //draws and darkens the circle by over writing it twice
     for(var i=0; i<2; i++)
     {
-        if(Statenum==0)
+        if(statetype === 0)
         {
-            for(var j=0; j<10; j++)
+            if(Statenum==0)
             {
-                c.beginPath();
-                c.arc(x,y,40,0,360,false);
-                c.stroke();
+                for(var j=0; j<10; j++)
+                    drawState(x, y, 40);
             }
+
+            else
+                drawState(x, y, 30);
         }
 
-        else
+        if(statetype === 1)
         {
-            c.beginPath();
-            c.arc(x,y,30,0,360,false);
-            c.stroke();
+            for(var j=0; j<3; j++)
+                drawAcceptState(x,y,30);
         }
         
         context.font = "20px Arial";
         context.fillText("q"+Statenum, x-5, y+10);
 
         document.getElementById("addState").disabled = false;
-    }
+        document.getElementById("addAcceptState").disabled = false;
 
-   
+    }
+    
 
     //object to hold the attributes of each new state that later gets added on to the 
     //states array
@@ -95,7 +127,10 @@ function clickPosition(canvas, event) {
 
     //add state to the array of states
     states.push(temp);
-
+   
+    if (statetype === 1)
+        acceptStates.push(temp);
+    
     Statenum++;
 
     for(var i=0; i<states.length; i++)
@@ -158,6 +193,8 @@ function hitDetection(){
             }
             
             Paths.push(path);
+
+            //draws a line 
             ctx.moveTo(clicked[0].xpos, clicked[0].ypos);
             ctx.lineTo(clicked[1].xpos, clicked[1].ypos);
             ctx.stroke();
@@ -165,8 +202,8 @@ function hitDetection(){
             t=0;
             
 
-            var tempx = (clicked[0].xpos + clicked[1].xpos) / 2;
-            var tempy = (clicked[0].ypos + clicked[1].ypos) / 2;
+            var tempx = (clicked[0].xpos + clicked[1].xpos) / 2; // puts the text in the middle of the 2 states
+            var tempy = (clicked[0].ypos + clicked[1].ypos) / 2; 
             var dx = Math.abs(clicked[0].xpos - clicked[1].xpos);
             var dy = Math.abs(clicked[0].ypos - clicked[1].ypos);
 
@@ -183,7 +220,6 @@ function hitDetection(){
             clicked=[];
 
         }
-
     });
     
 }
