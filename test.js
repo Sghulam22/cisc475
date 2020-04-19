@@ -8,6 +8,12 @@ var Statenum = 0;
 canvas.width = window.innerWidth*.999;
 canvas.height=window.innerHeight*.8;
 
+var stateImg = new Image();
+stateImg.src = "circle2.svg";
+
+var acceptImg = new Image();
+acceptImg.src = "acceptstate.svg"
+
 //array to hold all the states and paths
 var states = [];
 var acceptStates =[];
@@ -27,7 +33,6 @@ function clearCanvas()
     Statenum=0;
     context.clearRect(0,0,canvas.width,canvas.height);  
 }
-
 
 
 //function gets called when the button "add state" gets clicked
@@ -56,23 +61,17 @@ function addAcceptState()
 //function
 function drawState(x, y, r)
 {
-    var c= canvas.getContext('2d'); 
-    c.beginPath();
-    c.arc(x,y,r,0,360,false);
-    c.stroke();
+
+    var c= canvas.getContext('2d');  
+    c.drawImage(stateImg,x-55,y-55);
 }
 
 //function that takes parameters x,y,r and draws 2 circles: one inside the other to mimick accept state
-function drawAcceptState(x, y, r)
+function drawAcceptState(x, y)
 {
-    var c= canvas.getContext('2d'); 
-    c.beginPath();
-    c.arc(x,y,r,0,360,false);
-    c.stroke();
 
-    c.beginPath();
-    c.arc(x,y,r+5,0,360,false);
-    c.stroke();
+    var c= canvas.getContext('2d');  
+    c.drawImage(acceptImg,x-55,y-55);
 }
 
 
@@ -88,14 +87,7 @@ function clickPosition(canvas, event, statetype) {
     {
         if(statetype === 0)
         {
-            if(Statenum==0)
-            {
-                for(var j=0; j<10; j++)
-                    drawState(x, y, 40);
-            }
-
-            else
-                drawState(x, y, 30);
+            drawState(x, y, 30);
         }
 
         if(statetype === 1)
@@ -140,7 +132,13 @@ function clickPosition(canvas, event, statetype) {
 
 } 
 
-
+function distance(x1,y1,x2,y2)
+{
+    var dist;
+    dist = Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
+    console.log(distance);
+    return dist;
+}
 function saveFile()
 {
      alert("save file");
@@ -153,22 +151,25 @@ function openFile()
 
 //function that checks hit detection
 function hitDetection(){
+   
     var ctx = canvas.getContext('2d');
     ctx.canvas.addEventListener('mousedown', function(event) {
-       
+        var x1,x2,y1,y2;
+        //gets the exact mouseclick poition
         let rect = canvas.getBoundingClientRect(); 
-        let x1 = event.clientX - rect.left; 
-        let y1 = event.clientY - rect.top;
+        let x = event.clientX - rect.left; 
+        let y = event.clientY - rect.top;
         
-        console.log(x1, y1);
+        console.log(x, y);
 
-        if(t<2)
+        //if first click
+        if(t < 2)
         {
             for(var i = 0; i < states.length; i++)
             {
                 var b = states[i];
-                var dx = Math.abs(x1-b.xpos);
-                var dy = Math.abs(y1-b.ypos); 
+                var dx = Math.abs(x-b.xpos);
+                var dy = Math.abs(y-b.ypos); 
          
                  if(dx<30 && dy<30)
                 {
@@ -179,26 +180,34 @@ function hitDetection(){
             }
         }
 
-        if(t===2)
+        if(t === 2)
         {
             var input = window.prompt("enter their relation","");
             console.log(input);
 
+            x1 = clicked[0].xpos;
+            x2 = clicked[1].xpos;
+            y1 = clicked[0].ypos;
+            y2 = clicked[1].ypos;
+            
+
             var path = {
                 "relation":input,
-                "x1": clicked[0].xpos,
-                "y1": clicked[0].ypos,
-                "x2": clicked[1].xpos,
-                "y2": clicked[1].ypos,
+                "x1": x1,
+                "y1": y1,
+                "x2": x2,
+                "y2": y2,
             }
             
             Paths.push(path);
 
             //draws a line 
-            ctx.moveTo(clicked[0].xpos, clicked[0].ypos);
-            ctx.lineTo(clicked[1].xpos, clicked[1].ypos);
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
             ctx.stroke();
             console.log("clicked");
+
+            distance(x1,y1,x2,y2);
             t=0;
             
 
@@ -223,6 +232,10 @@ function hitDetection(){
     });
     
 }
+
+
+
+
 
 
 window.addEventListener('load', function(event) {
