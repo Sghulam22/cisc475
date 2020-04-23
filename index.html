@@ -14,6 +14,7 @@
             <a color="white">CISC 475</a>
             <div id="button_div">
                 <button id="addState" type="button" onclick="addState()" class="btn btn-dark">add state</button>
+                <button id="addAcceptState" type="button" onclick="addAcceptState()" class="btn btn-dark">add Accept State</button>
                 <button type="button" onclick="saveFile()" class="btn btn-dark">save file</button>
                 <button type="button" onclick="move()" class="btn btn-dark">open file</button>
                 <button type="button" onclick="clearCanvas()"class="btn btn-danger">delete</button>
@@ -29,9 +30,16 @@
                 </div>
             </div>
         </nav>
-            <canvas id="myCanvas"></canvas>
-            <script src="test.js"></script>
+            <canvas id="myCanvas">
+                
+            </canvas>
 
+            <svg width="100" height="100">
+                <circle cx="50" cy="50" r="40" stroke="black" stroke-width="4" fill ="white" />
+             </svg> 
+              
+            <script src="test.js"></script>
    
+            
     </body>
 </html>

@@ -8,8 +8,17 @@ var Statenum = 0;
 canvas.width = window.innerWidth*.999;
 canvas.height=window.innerHeight*.8;
 
+
+
+var stateImg = new Image();
+stateImg.src = "circle2.svg";
+
+var acceptImg = new Image();
+acceptImg.src = "acceptstate.svg"
+
 //array to hold all the states and paths
 var states = [];
+var acceptStates =[];
 var Paths = []
 var clicked=[]; //holds the click position for connecting states
 var t=0; //click counter
@@ -28,58 +37,106 @@ function clearCanvas()
 }
 
 
-
-//function gets called when the button "add state gets clicked"
-//calls click positition function
+//function gets called when the button "add state" gets clicked
 function addState()
 {
     document.getElementById("addState").disabled = true;
-    console.log("add state");
+    document.getElementById("addAcceptState").disabled = true;
+    document.body.style.cursor = "pointer";
+
     canvas.addEventListener("mousedown", function(e) 
     { 
-        clickPosition(canvas, e); 
+        clickPosition(canvas, e, 0); 
+    }, {once : true});
+}
+
+//function that gets called when the button "add accept state" gets clicked
+function addAcceptState()
+{
+    document.getElementById("addAcceptState").disabled = true;
+    document.getElementById("addState").disabled = true;
+    canvas.addEventListener("mousedown", function(e) 
+    { 
+        clickPosition(canvas, e, 1); 
     }, {once : true});
 
 }
 
+//function
+function drawState(x, y)
+{
 
-function clickPosition(canvas, event) { 
+    var c= canvas.getContext('2d');  
+    c.drawImage(stateImg,x-55,y-55);
+}
+
+
+function drawLine(x1,y1,x2,y2)
+{
+    for(var i=0; i<10; i++)
+    {
+        let ctx = canvas.getContext('2d');
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2-50, y2);
+        ctx.stroke();
+    }
+}
+
+//function needs work
+function drawArrow(x2,y2)
+{
+    let ctx = canvas.getContext('2d');
+
+    var tempy = y2-30;
+    for(var i=0; i<10; i++)
+    {
+        ctx.moveTo(x2-80, y2-30);
+        ctx.lineTo(x2-50,y2);
+        ctx.stroke();
+
+        ctx.moveTo(x2-80, tempy+60);
+        ctx.lineTo(x2-50,y2);
+        ctx.stroke();
+    }
+}
+
+
+//function that takes parameters x,y,r and draws 2 circles: one inside the other to mimick accept state
+function drawAcceptState(x, y)
+{
+    var c= canvas.getContext('2d');  
+    c.drawImage(acceptImg,x-55,y-55);
+}
+
+
+function clickPosition(canvas, event, statetype) { 
 
     let rect = canvas.getBoundingClientRect(); 
     let x = event.clientX - rect.left; 
     let y = event.clientY - rect.top;
-    var c= canvas.getContext('2d'); 
-    var result;
 
-   
+    var isAcceptState = false;
 
-    //draws and darkens the circle by over writing it twice
-    for(var i=0; i<2; i++)
-    {
-        if(Statenum==0)
+
+        if(statetype === 0)
         {
-            for(var j=0; j<10; j++)
-            {
-                c.beginPath();
-                c.arc(x,y,40,0,360,false);
-                c.stroke();
-            }
+            drawState(x, y);
         }
 
-        else
+        if(statetype === 1)
         {
-            c.beginPath();
-            c.arc(x,y,30,0,360,false);
-            c.stroke();
+            drawAcceptState(x, y);
+            isAcceptState = true;
         }
         
         context.font = "20px Arial";
         context.fillText("q"+Statenum, x-5, y+10);
 
         document.getElementById("addState").disabled = false;
-    }
+        document.getElementById("addAcceptState").disabled = false;
 
-   
+    
+
 
     //object to hold the attributes of each new state that later gets added on to the 
     //states array
@@ -87,30 +144,36 @@ function clickPosition(canvas, event) {
         "state":Statenum,
         "xpos":x,
         "ypos":y,
-        "r":30,
-        "start":0,
-        "start":360,
-        "bool":false
+        "acceptState": isAcceptState
     };
 
     //add state to the array of states
     states.push(temp);
-
+   
+    if (statetype === 1)
+        acceptStates.push(temp);
+    
     Statenum++;
 
-    for(var i=0; i<states.length; i++)
-    {
-        console.log(states[i].xpos, states[i].ypos);
-    }
-
+    document.body.style.cursor = "default";
 } 
 
+//function that returns distance of 2 points
+function distance(x1,y1,x2,y2)
+{
+    var dist;
+    dist = Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
+    console.log(distance);
+    return dist;
+}
 
+//needs implementation
 function saveFile()
 {
      alert("save file");
 }
 
+//needs implementation
 function openFile()
 {
     alert("open file");
@@ -118,24 +181,28 @@ function openFile()
 
 //function that checks hit detection
 function hitDetection(){
+   
     var ctx = canvas.getContext('2d');
     ctx.canvas.addEventListener('mousedown', function(event) {
-       
-        let rect = canvas.getBoundingClientRect(); 
-        let x1 = event.clientX - rect.left; 
-        let y1 = event.clientY - rect.top;
-        
-        console.log(x1, y1);
+        var x1,x2,y1,y2;
 
-        if(t<2)
+        //gets the exact mouseclick poition
+        let rect = canvas.getBoundingClientRect(); 
+        let x = event.clientX - rect.left; 
+        let y = event.clientY - rect.top;
+        
+        console.log(x, y);
+
+        //if first click
+        if(t < 2)
         {
             for(var i = 0; i < states.length; i++)
             {
                 var b = states[i];
-                var dx = Math.abs(x1-b.xpos);
-                var dy = Math.abs(y1-b.ypos); 
+                var dx = Math.abs(x-b.xpos);
+                var dy = Math.abs(y-b.ypos); 
          
-                 if(dx<30 && dy<30)
+                 if(dx<51 && dy<51)
                 {
                     console.log("you touched"+ b.xpos, b.ypos);
                     t++;
@@ -144,29 +211,39 @@ function hitDetection(){
             }
         }
 
-        if(t===2)
+        if(t === 2)
         {
             var input = window.prompt("enter their relation","");
             console.log(input);
 
+            x1 = clicked[0].xpos;
+            x2 = clicked[1].xpos;
+            y1 = clicked[0].ypos;
+            y2 = clicked[1].ypos;
+            
+
             var path = {
                 "relation":input,
-                "x1": clicked[0].xpos,
-                "y1": clicked[0].ypos,
-                "x2": clicked[1].xpos,
-                "y2": clicked[1].ypos,
+                "x1": x1,
+                "y1": y1,
+                "x2": x2,
+                "y2": y2,
             }
             
             Paths.push(path);
-            ctx.moveTo(clicked[0].xpos, clicked[0].ypos);
-            ctx.lineTo(clicked[1].xpos, clicked[1].ypos);
-            ctx.stroke();
+
+            //draws a line 
+            drawLine(x1,y1,x2,y2);
+            drawArrow(x2,y2);
+           
             console.log("clicked");
+
+            distance(x1,y1,x2,y2);
             t=0;
             
 
-            var tempx = (clicked[0].xpos + clicked[1].xpos) / 2;
-            var tempy = (clicked[0].ypos + clicked[1].ypos) / 2;
+            var tempx = (clicked[0].xpos + clicked[1].xpos) / 2; // puts the text in the middle of the 2 states
+            var tempy = (clicked[0].ypos + clicked[1].ypos) / 2; 
             var dx = Math.abs(clicked[0].xpos - clicked[1].xpos);
             var dy = Math.abs(clicked[0].ypos - clicked[1].ypos);
 
@@ -183,12 +260,11 @@ function hitDetection(){
             clicked=[];
 
         }
-
     });
     
 }
 
-
+//event listener that gets activated to listen for clicks so that it can connect states
 window.addEventListener('load', function(event) {
     hitDetection();
 });
