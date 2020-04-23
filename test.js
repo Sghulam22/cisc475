@@ -222,6 +222,19 @@ function hitDetection(){
             y2 = clicked[1].ypos;
             alreadyDrawn = false;
 
+            for(item of Paths){
+                if(x1 === item.x1 && x2 === item.x2 && y1 === item.y1 && y2 === item.y2){
+                    alreadyDrawn = true;
+                }
+            }
+
+            if(alreadyDrawn){    
+                clicked=[];
+                t=0;
+                console.log("path already exists");
+            }
+
+            else{
 
             var input = window.prompt("enter their relation","");
             console.log(input);
@@ -235,19 +248,6 @@ function hitDetection(){
                 "y2": y2,
             }
 
-            for(item of Paths){
-                if(x1 === item.x1 && x2 === item.x2 && y1 === item.y1 && y2 === item.y2){
-                    alreadyDrawn = true;
-                }
-            }
-
-            if(alreadyDrawn){    
-                clicked=[];
-                t=0;
-                console.log("path already exists " + input + " not drawn");
-            }
-
-            else{
             
             Paths.push(path);
 
