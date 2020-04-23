@@ -1,4 +1,3 @@
-//assign a canvas variable
 var canvas = document.querySelector("canvas");
 console.log(canvas);
 
@@ -6,8 +5,7 @@ var Statenum = 0;
 
 //set the height and width of the canvas
 canvas.width = window.innerWidth*.999;
-canvas.height=window.innerHeight*.8;
-
+canvas.height= window.innerHeight*.8;
 
 
 var stateImg = new Image();
