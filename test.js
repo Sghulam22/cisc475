@@ -209,15 +209,33 @@ function hitDetection(){
             }
         }
 
-        if(t === 2)
+        if(t === 2 )
         {
-            var input = window.prompt("enter their relation","");
-            console.log(input);
+            //var input = window.prompt("enter their relation","");
+            //console.log(input);
 
             x1 = clicked[0].xpos;
             x2 = clicked[1].xpos;
             y1 = clicked[0].ypos;
             y2 = clicked[1].ypos;
+            alreadyDrawn = false;
+
+            for(item of Paths){
+                if(x1 === item.x1 && x2 === item.x2 && y1 === item.y1 && y2 === item.y2){
+                    alreadyDrawn = true;
+                }
+            }
+
+            if(alreadyDrawn){    
+                clicked=[];
+                t=0;
+                console.log("path already exists");
+            }
+
+            else{
+
+            var input = window.prompt("enter their relation","");
+            console.log(input);
             
 
             var path = {
@@ -227,6 +245,7 @@ function hitDetection(){
                 "x2": x2,
                 "y2": y2,
             }
+
             
             Paths.push(path);
 
@@ -256,7 +275,7 @@ function hitDetection(){
             context.fillText(input, tempx, tempy);
             console.log(input);     
             clicked=[];
-
+            }
         }
     });
     
