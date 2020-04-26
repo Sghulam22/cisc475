@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        
+
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel ="stylesheet" href="index.css">
 
@@ -23,9 +23,10 @@
                 <button type="button" onclick="document.getElementById('modal-create').style.display='block'" class="btn btn-dark">add transition</button>
                 <button type="button" onclick="run()" class="btn btn-dark">run</button>
                 <button type="button" id="save" onclick="saveImage()" class="btn btn-dark">save Machine</button>
-                <button type="button" onclick="reload()"class="btn btn-danger">delete</button>
+                <button type="button" onclick="reload()" class="btn btn-danger">delete</button>
+                <button type="button" onclick="clear_canvas()" class="btn btn-danger">clear</button>
             </div>
-            
+
             <div id="modal-create" class="modal" align="center">
                 <div class="modal-content">
                   <h4 text-align="center">Create transition</h4>
@@ -42,9 +43,9 @@
                   <button type="button" onclick="document.getElementById('modal-create').style.display='none'" class="cancelbtn">Cancel</button>
                     </div>
                 </div>
-              </div> 
+              </div>
 
-            
+
             <div class="dropdown">
                 <button onclick="f()" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Menu
@@ -55,20 +56,20 @@
                 </div>
             </div>
         </nav>
-
             <canvas id="canvas" width ="1200" height="477"></canvas>
 
              <script>
                 var json; //var to hold the json object
                 var canvas = new fabric.Canvas('canvas');  //canvas variable
                 var arrowimgURL = "arrow1.png";  //transition image
-                var arrow = new Image(); 
+                var arrow = new Image();
                 var statenum = 0;  //holds the statnumber
 
                 var states = [];   //array that stores state information
                 var transitions = []; //array that stores transition informations
-                
-            
+                var alphabet = []; //holds the alphabet defined so far, amended on adding transition
+
+
                 //function that gets called when save machine gets clicked
                 //saves the machine as an image as well as json object
                 function saveImage()
@@ -84,7 +85,7 @@
 
 
                 //function saves the canvas as a json object and saves it to a file.
-                function exportToJsonFile(json) 
+                function exportToJsonFile(json)
                 {
                     let str = JSON.stringify(json);
                     let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(str);
@@ -96,31 +97,40 @@
                     linkElement.click();
                 }
 
-                //function renders the canvas to a previous saved machine 
+                //function renders the canvas to a previous saved machine
                 //this function should be used to reopen file
                 function reload()
                 {
                     canvas.clear();
-                    canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));                    
+                    canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
                 }
 
-                
+                function clear_canvas()
+                {
+                  states = [];   //array that stores state information
+                  transitions = []; //array that stores transition informations
+                  alphabet = [];
+                  statenum = 0;
+                  canvas.remove(...canvas.getObjects());
+                }
+
+
                 //function enables a click listener to add state to the canvas
                 function addState()
                 {
-                                   
+
                     document.getElementById("addState").disabled = true;
                     document.getElementById("addAcceptState").disabled = true;
                     document.body.style.cursor = "pointer";
 
                     canvas.on('mouse:down', function(options) {
-                        drawState(options); 
-                        
+                        drawState(options);
+
                     });
                     document.body.style.cursor = "pointer";
                 }
 
-               
+
                 //enables an event listener that calls "drawAcceptState"
                 function addAcceptState()
                 {
@@ -129,8 +139,8 @@
                     document.body.style.cursor = "pointer";
 
                     canvas.on('mouse:down', function(options) {
-                        drawAcceptState(options); 
-                        
+                        drawAcceptState(options);
+
                     });
                     document.body.style.cursor = "pointer";
                 }
@@ -139,37 +149,37 @@
                 function drawAcceptState(event)
                 {
                     //get mouse click x and y
-                    let x = event.e.clientX; 
+                    let x = event.e.clientX;
                     let y = event.e.clientY;
 
                     console.log(x,y)
                     canvas.off();
 
                     var c1 = new fabric.Circle({
-                       
+
                        strokeWidth: 5,
                        radius: 40,
                        fill: '#fff',
                        stroke: 'black',
                        left: x-60,
                        top: y-120,
-                       
+
                    });
 
                    var c2 = new fabric.Circle({
-                       
+
                        strokeWidth: 3,
                        radius: 50,
                        fill: '#fff',
                        stroke: 'black',
                        left: x-69,
                        top: y-128,
-                       
+
                    });
 
-                   var text = new fabric.Text('Q'+statenum, { 
+                   var text = new fabric.Text('Q'+statenum, {
                         left: c1.left+20,
-                        top: c1.top+20, 
+                        top: c1.top+20,
                         fill: 'black'
                     });
 
@@ -184,7 +194,7 @@
                         "y": c1.top,
                         "statenum": statenum,
                         "acceptState": true
-                        
+
                     }
 
                     statenum++;
@@ -197,7 +207,7 @@
                     {
                         console.log(states[i]);
                     }
-                   
+
                     document.getElementById("addState").disabled = false;
                     document.getElementById("addAcceptState").disabled = false;
                 }
@@ -205,22 +215,22 @@
 
                 //function that draws the state to the canvas
                 function drawState(event)
-                { 
+                {
                     //get mouse click x and y
-                    let x = event.e.clientX; 
+                    let x = event.e.clientX;
                     let y = event.e.clientY;
                     console.log(x,y)
                     canvas.off();
-                    
+
                     var temp = new fabric.Circle({
-                       
+
                         strokeWidth: 5,
                         radius: 40,
                         fill: '#fff',
                         stroke: 'black',
                         left: x-60,
                         top: y-120,
-                        
+
                     });
 
                     var state = {
@@ -228,14 +238,14 @@
                         "y": temp.top,
                         "statenum": statenum,
                         "acceptState": false
-                        
+
                     }
 
                     states.push(state);
-                                  
-                    var text = new fabric.Text('Q'+statenum, { 
+
+                    var text = new fabric.Text('Q'+statenum, {
                         left: temp.left+20,
-                        top: temp.top+20, 
+                        top: temp.top+20,
                         fill: 'black'
                     });
 
@@ -244,7 +254,7 @@
                         left: temp.left,
                         top: temp.top,
                     });
-                 
+
                     canvas.add(group);
 
                     statenum++;
@@ -253,7 +263,7 @@
                     document.getElementById("addState").disabled = false;
                     document.getElementById("addAcceptState").disabled = false;
 
-             
+
                     json = canvas.toJSON();
                     console.log(json);
 
@@ -261,7 +271,7 @@
 
                 //function that draws an arrow on the canvas with a text attached to it
                 function addArrow()
-                { 
+                {
                     //var input = window.prompt("enter their relation","");
                     var startState = document.getElementById("start").value;
                     var endState = document.getElementById("end").value;
@@ -274,7 +284,11 @@
                     }
 
                     transitions.push(t);
-                    
+
+                    if (alphabet.indexOf(input)!=-1){  //if input not in the alphabet, put into the alphabet
+                      alphabet.push(input);
+                    }
+
                     for(var i=0; i<transitions.length; i++)
                     {
                         console.log(transitions[i]);
@@ -285,14 +299,14 @@
 
 
                     var temp = new fabric.Image(arrow, {
-                        
+
                         angle: 0,
                         width: 1280,
                         height: 640,
                         left: 50,
                         top: 70,
                         scaleX: .2,
-                        scaleY: .2,  
+                        scaleY: .2,
                     });
 
                     var text = new fabric.Text(input,{
@@ -306,7 +320,7 @@
                     });
 
                     canvas.add(group);
-               
+
                 };
 
 
@@ -318,7 +332,7 @@
                 function run()
                 {
                     var input = window.prompt("enter string","");
-                    var result = true; 
+                    var result = true;
                     var currentState=0;
                     var lastState;
 
@@ -330,7 +344,7 @@
                         {
                             // console.log(k);
                             // console.log(input.charAt(i));
-                            // console.log(transitions[i].input); 
+                            // console.log(transitions[i].input);
 
                             if(transitions[k].from === currentState)
                             {
@@ -371,8 +385,8 @@
                 arrow.src = arrowimgURL;
                 arrow.crossOrigin = "anonymous";
 
-            </script>               
-         
+            </script>
+
              <!-- <script src="test.js"></script>  -->
     </body>
 </html>
