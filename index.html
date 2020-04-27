@@ -16,7 +16,7 @@
 
     <body>
         <nav class="navbar navbar-dark bg-dark" id="nav">
-            <a color="white">CISC 475</a>
+            <h3>CISC 475</h3>
             <div id="button_div">
                 <button id="addState" type="button" onclick="addState()" class="btn btn-dark">add state</button>
                 <button id="addAcceptState" type="button" onclick="addAcceptState()" class="btn btn-dark">add Accept State</button>
@@ -28,24 +28,28 @@
             
             <div id="modal-create" class="modal" align="center">
                 <div class="modal-content">
-                  <h4 text-align="center">Create transition</h4>
-                    <div class="input-field">
-                        <label for="start">from</label>
-                        <input type= "text" id = "start" placeholder="enter state number" required><br/>
-                        <label for="end">to</label>
+                    <h4 text-align="center">Create transition</h4>
+                    <div class="input-field" text-align="center">
+                        <label for="start">from</label>&nbsp &nbsp 
+                        <input  type= "text" id = "start" placeholder="enter state number" required><br/>
+                        <label for="end">to</label> &nbsp &nbsp &nbsp &nbsp
                         <input type= "text" id = "end" placeholder="enter state number" required><br/>
-                        <label for="input">input</label>
-                        <input type= "text" id = "input" placeholder="enter path" required>
-                        <button class="btn btn-outline-success my-2 my-sm-0" onclick="addArrow()">add transition</button>
+                        <label for="input">input</label> &nbsp  &nbsp
+                        <input type= "text" id = "input" placeholder="enter path" required>     
                     </div>
-                <div class="container" style="background-color:#f1f1f1">
-                  <button type="button" onclick="document.getElementById('modal-create').style.display='none'" class="cancelbtn">Cancel</button>
+
+                    <div class="container" style="background-color:#f1f1f1">
+                        <br/>
+                        <button class="btn btn-outline-success my-2 my-sm-0" onclick="addArrow()">add transition</button>
+                        <button type="button" class="btn btn-danger" onclick="document.getElementById('modal-create').style.display='none'" class="cancelbtn">Cancel</button>
+                        <br/>
+                        <br/>
                     </div>
                 </div>
               </div> 
 
             
-            <div class="dropdown">
+           <!-- <div class="dropdown">
                 <button onclick="f()" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Menu
                 </button>
@@ -53,7 +57,8 @@
                 <a class="dropdown-item" href="#">save</a>
                 <a class="dropdown-item" href="#">upload</a>
                 </div>
-            </div>
+            </div> -->
+
         </nav>
 
             <canvas id="canvas" width ="1200" height="477"></canvas>
@@ -67,7 +72,42 @@
 
                 var states = [];   //array that stores state information
                 var transitions = []; //array that stores transition informations
+
+                canvas.setHeight(window.innerHeight -75);
+                canvas.setWidth(window.innerWidth);
                 
+                var f1 = new fabric.Circle({
+                       
+                       strokeWidth: 5,
+                       radius: 40,
+                       fill: '#fff',
+                       stroke: 'black',
+                       left: 60,
+                       top: 120,
+                       
+                   });
+
+                   canvas.add(f1);
+               
+                    canvas.on('object:moving', function(e) {
+                        var p = e.target;
+                        console.log(p,"moving");
+                        canvas.renderAll();
+                    });
+
+
+               
+                  
+                    
+                //function returns mouse click coordinates 
+                function getMouseCoords(event)
+                {
+                    var pointer = canvas.getPointer(event.e);
+                    var posX = pointer.x;
+                    var posY = pointer.y;
+                   
+                    return [posX,posY];
+                }
             
                 //function that gets called when save machine gets clicked
                 //saves the machine as an image as well as json object
@@ -139,10 +179,10 @@
                 function drawAcceptState(event)
                 {
                     //get mouse click x and y
-                    let x = event.e.clientX; 
-                    let y = event.e.clientY;
+                    let arr = getMouseCoords(event);
+                    let x = arr[0]; 
+                    let y = arr[1];
 
-                    console.log(x,y)
                     canvas.off();
 
                     var c1 = new fabric.Circle({
@@ -151,8 +191,8 @@
                        radius: 40,
                        fill: '#fff',
                        stroke: 'black',
-                       left: x-60,
-                       top: y-120,
+                       left: x-40,
+                       top: y-40,
                        
                    });
 
@@ -162,8 +202,8 @@
                        radius: 50,
                        fill: '#fff',
                        stroke: 'black',
-                       left: x-69,
-                       top: y-128,
+                       left: x-49,
+                       top: y-49,
                        
                    });
 
@@ -202,15 +242,20 @@
                     document.getElementById("addAcceptState").disabled = false;
                 }
 
+                
+                
 
                 //function that draws the state to the canvas
                 function drawState(event)
                 { 
+  
                     //get mouse click x and y
-                    let x = event.e.clientX; 
-                    let y = event.e.clientY;
-                    console.log(x,y)
+                    let arr = getMouseCoords(event);
+                    let x = arr[0]; 
+                    let y = arr[1];
+                    
                     canvas.off();
+                  
                     
                     var temp = new fabric.Circle({
                        
@@ -218,8 +263,8 @@
                         radius: 40,
                         fill: '#fff',
                         stroke: 'black',
-                        left: x-60,
-                        top: y-120,
+                        left: x-40,
+                        top: y-40,
                         
                     });
 
@@ -232,7 +277,7 @@
                     }
 
                     states.push(state);
-                                  
+                                                  
                     var text = new fabric.Text('Q'+statenum, { 
                         left: temp.left+20,
                         top: temp.top+20, 
@@ -259,6 +304,15 @@
 
                 };
 
+                function makeLine(coords) {
+                    return new fabric.Line(coords, {
+                    fill: 'red',
+                    stroke: 'red',
+                    strokeWidth: 5,
+                    selectable: true,
+                    });
+                }
+
                 //function that draws an arrow on the canvas with a text attached to it
                 function addArrow()
                 { 
@@ -266,6 +320,7 @@
                     var startState = document.getElementById("start").value;
                     var endState = document.getElementById("end").value;
                     var input = document.getElementById("input").value;
+                    var x1,x2,y1,y2;
 
                     var t = {
                         "from":startState,
@@ -280,9 +335,26 @@
                         console.log(transitions[i]);
                     }
 
+
+                    for(var i=0; i<states.length; i++){
+
+                        if(states[i].statenum == startState){
+                            x1=states[i].x + 40;
+                            y1=states[i].y + 40;
+                        }
+
+                        if(states[i].statenum == endState){
+                            x2=states[i].x + 40;
+                            y2=states[i].y + 40;
+                        }
+                    }
+
+                    var line = makeLine([x1,y1,x2,y2]);
+                    //canvas.add(line);
+                    json = canvas.toJSON();
+
                     //hides the modal
                     document.getElementById("modal-create").style.display=("none");
-
 
                     var temp = new fabric.Image(arrow, {
                         
@@ -296,13 +368,13 @@
                     });
 
                     var text = new fabric.Text(input,{
-                        left: temp.left+100,
-                        top: temp.top+10,
+                        left: line.left+00,
+                        top: line.top+10,
                     });
 
-                    var group = new fabric.Group([ temp, text ],{
-                        top:100,
-                        left: 100
+                    var group = new fabric.Group([ line, text ],{
+                        top: line.top,
+                        left: line.left
                     });
 
                     canvas.add(group);
@@ -318,58 +390,47 @@
                 function run()
                 {
                     var input = window.prompt("enter string","");
-                    var result = true; 
-                    var currentState=0;
+                    var result = false; 
+                    var currentState = 0;
                     var lastState;
 
                     for(var i=0; i<input.length; i++)
                     {
                         var found = 0;
 
-                        for(var k in transitions)
+                        for(var k=0; k < transitions.length; k++)
                         {
-                            // console.log(k);
-                            // console.log(input.charAt(i));
-                            // console.log(transitions[i].input); 
-
-                            if(transitions[k].from === currentState)
+    
+                            if( transitions[k].from == currentState )
                             {
-                                if(input.charAt(i) === transitions[k].input)
+                                if( input.charAt(i) == transitions[k].input )
                                 {
-                                    found = 1;
                                     currentState = transitions[k].to;
-
-                                    if(i === input.length-1)
-                                    {
-                                        for(j in states)
-                                        {
-                                            if(states[j].statenum === currentState)
-                                            {
-                                                if( states[j].acceptState === false)
-                                                    result = false;
-                                            }
-                                        }
-                                    }
+                                    console.log("moved to: "+transitions[k].to + ", from: "+ transitions[k].from+", on: "+ transitions[k].input);
                                 }
-
                             }
-                        }
 
-                        if(found === 0)
-                        {
-                            result = false;
+                        
                         }
                     }
 
-                    if(result === false)
+                    for(i in states)
+                    {
+                        if(currentState == states[i].statenum && states[i].acceptState == true)
+                            result = true;
+                    }
+
+                    if(result == false)
                         alert("false");
-                    else if(result === true)
+                    else if(result == true)
                         alert("true");
                 }
 
+                
 
                 arrow.src = arrowimgURL;
                 arrow.crossOrigin = "anonymous";
+
 
             </script>               
          

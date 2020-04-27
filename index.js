@@ -1,19 +1,55 @@
-var stateimgURL = 'circle2.svg';
-var canvas = new fabric.Canvas('canvas');
 
 
-var arrowimgURL = "arrow1.png";
-var arrow = new Image();
-//var state = new Image();
-var statenum = 0;
+var json; //var to hold the json object
+var canvas = new fabric.Canvas('canvas');  //canvas variable
+var arrowimgURL = "arrow1.png";  //transition image
+var arrow = new Image(); 
+var statenum = 0;  //holds the statnumber
 
-var states = [];
-var transitions = [];
+var states = [];   //array that stores state information
+var transitions = []; //array that stores transition informations
 
 
+//function that gets called when save machine gets clicked
+//saves the machine as an image as well as json object
+function saveImage()
+{
+    var link = document.createElement('a');
+    link.href = canvas.toDataURL();
+    link.download = "machine.png";
+    link.click();
 
+    //call function to save the machine as a json
+    exportToJsonFile(json)
+}
+
+
+//function saves the canvas as a json object and saves it to a file.
+function exportToJsonFile(json) 
+{
+    let str = JSON.stringify(json);
+    let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(str);
+    let exportFileDefaultName = 'machine.json';
+
+    let linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+}
+
+//function renders the canvas to a previous saved machine 
+//this function should be used to reopen file
+function reload()
+{
+    canvas.clear();
+    canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));                    
+}
+
+
+//function enables a click listener to add state to the canvas
 function addState()
 {
+                   
     document.getElementById("addState").disabled = true;
     document.getElementById("addAcceptState").disabled = true;
     document.body.style.cursor = "pointer";
@@ -23,9 +59,10 @@ function addState()
         
     });
     document.body.style.cursor = "pointer";
-
 }
 
+
+//enables an event listener that calls "drawAcceptState"
 function addAcceptState()
 {
     document.getElementById("addState").disabled = true;
@@ -37,11 +74,12 @@ function addAcceptState()
         
     });
     document.body.style.cursor = "pointer";
-
 }
 
+ //function draws an accept state on the canvas
 function drawAcceptState(event)
 {
+    //get mouse click x and y
     let x = event.e.clientX; 
     let y = event.e.clientY;
 
@@ -76,6 +114,7 @@ function drawAcceptState(event)
         fill: 'black'
     });
 
+    //groups the text and the state together such that they move together
     var group = new fabric.Group([ c2, c1, text ], {
         left: c1.left,
         top: c1.top,
@@ -93,6 +132,7 @@ function drawAcceptState(event)
 
     states.push(state);
     canvas.add(group);
+    json = canvas.toJSON();
 
     for(i in states)
     {
@@ -101,21 +141,17 @@ function drawAcceptState(event)
    
     document.getElementById("addState").disabled = false;
     document.getElementById("addAcceptState").disabled = false;
-
 }
 
 
+//function that draws the state to the canvas
 function drawState(event)
 { 
-    
+    //get mouse click x and y
     let x = event.e.clientX; 
     let y = event.e.clientY;
     console.log(x,y)
     canvas.off();
-
-    var state = {
-        
-    }
     
     var temp = new fabric.Circle({
        
@@ -144,6 +180,7 @@ function drawState(event)
         fill: 'black'
     });
 
+    //groups the state and text so they can be moved together
     var group = new fabric.Group([ temp, text ], {
         left: temp.left,
         top: temp.top,
@@ -157,23 +194,23 @@ function drawState(event)
     document.getElementById("addState").disabled = false;
     document.getElementById("addAcceptState").disabled = false;
 
-    for(i in states)
-    {
-        console.log(states[i]);
-    }
+
+    json = canvas.toJSON();
+    console.log(json);
 
 };
 
+//function that draws an arrow on the canvas with a text attached to it
 function addArrow()
 { 
     //var input = window.prompt("enter their relation","");
-    var SS = document.getElementById("start").value;
-    var ES = document.getElementById("end").value;
+    var startState = document.getElementById("start").value;
+    var endState = document.getElementById("end").value;
     var input = document.getElementById("input").value;
 
     var t = {
-        "from":SS,
-        "to":ES,
+        "from":startState,
+        "to":endState,
         "input":input
     }
 
@@ -184,18 +221,19 @@ function addArrow()
         console.log(transitions[i]);
     }
 
+    //hides the modal
     document.getElementById("modal-create").style.display=("none");
 
-    console.log(SS,ES,input);
+
     var temp = new fabric.Image(arrow, {
+        
         angle: 0,
         width: 1280,
         height: 640,
         left: 50,
         top: 70,
         scaleX: .2,
-        scaleY: .2,
-      
+        scaleY: .2,  
     });
 
     var text = new fabric.Text(input,{
@@ -212,6 +250,12 @@ function addArrow()
 
 };
 
+
+/*
+this function does not work properly, but when it is complete, it should
+run the automata based on an input that the user enters. It runs through
+the set of transitions and sees if the language is acceptable.
+*/
 function run()
 {
     var input = window.prompt("enter string","");
@@ -266,4 +310,4 @@ function run()
 
 
 arrow.src = arrowimgURL;
-// state.src = stateimgURL;
+arrow.crossOrigin = "anonymous";
