@@ -4,6 +4,7 @@ fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
 
 var transitionArray = [];
 var isShiftDown = false;
+var isCtrlDown = false;
 
 canvas.on({'selection:created': onObjectSelected,
             'selection:updated': onSelectionUpdated,
@@ -15,12 +16,16 @@ document.onkeydown = function(e){
 
   if(e.keyCode == 16)
     isShiftDown = true;
+  else if(e.keyCode == 17)
+    isCtrlDown = true;
 }
 
 document.onkeyup = function(e){
 
   if(e.keyCode == 16)
     isShiftDown = false;
+  else if(e.keyCode == 17)
+    isCtrlDown = false;
 }
 
 //#region: Event Handlers
@@ -56,8 +61,9 @@ function onObjectSelected(e) {
   
     var activeObject = e.target;
     var isNewTransition = false;
+    var isState = activeObject.name[0] == "Q" ? true : false;
 
-    if(isShiftDown && activeObject.name[0] == "Q")
+    if(isShiftDown && isState)
     {
       canvas.discardActiveObject();
 
@@ -70,8 +76,12 @@ function onObjectSelected(e) {
           isNewTransition = true;
       }
     }
+    else if(isCtrlDown && isState)
+    {
+      activeObject.drawAccept();
+    }
 
-    if (activeObject.name[0] == "Q" && !isNewTransition && !isShiftDown){ 
+    if (isState && !isNewTransition && !isShiftDown && !isCtrlDown){ 
       
       activeObject.showTransitionAdjusters(); 
     }
