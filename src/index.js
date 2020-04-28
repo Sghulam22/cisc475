@@ -58,7 +58,7 @@ function onBeforeSelectionCleared(e, selectionUpdated)
 }
 
 function onObjectSelected(e) {
-  
+
     var activeObject = e.target;
     var isNewTransition = false;
     var isState = activeObject.name[0] == "Q" ? true : false;
@@ -85,7 +85,7 @@ function onObjectSelected(e) {
       
       activeObject.showTransitionAdjusters(); 
     }
-    
+
 }
 
 function onObjectMoving(e) {
@@ -117,8 +117,17 @@ function getMouseCoords(event)
     var pointer = canvas.getPointer(event.e);
     var posX = pointer.x;
     var posY = pointer.y;
-    
+
     return [posX,posY];
+}
+
+function clear_canvas()
+{
+    transitionArray = []; //array that stores transition informations
+    canvas.stateMap = new Map();
+    canvas.stateIndexMap = new Map();
+    canvas.transitionMap = new Map();
+    canvas.remove(...canvas.getObjects());
 }
 
 //#endregion
