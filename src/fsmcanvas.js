@@ -71,7 +71,6 @@ class FSMCanvas extends fabric.Canvas{
         var transition = this.transitionMap.get(key.slice(1));
         transition.setValue(value);
     }
-    }
 
     refresh()
     {
