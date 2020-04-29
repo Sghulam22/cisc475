@@ -79,6 +79,10 @@ class FSMCanvas extends fabric.Canvas{
             alert("cannot add duplicate transition");
     }
 
+    runAutomata(
+       
+    )
+
     updateTransitionValue(key, value)
     {
         var transition = this.transitionMap.get(key.slice(1));
