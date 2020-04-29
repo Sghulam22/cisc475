@@ -19,20 +19,21 @@
                 <button type="button" onclick="document.getElementById('modal-create').style.display='block'" class="btn btn-dark">add transition</button>
                 <button type="button" onclick="run()" class="btn btn-dark">run</button>
                 <button type="button" id="save" onclick="saveImage()" class="btn btn-dark">save Machine</button>
-                <button type="button" onclick="reload()" class="btn btn-danger">delete</button>
-                <button type="button" onclick="clear_canvas()" class="btn btn-danger">clear</button>
+                <button type="button" onclick="reload()" class="btn btn-danger">reload</button>
+                <button type="button" onclick="handle_delete()" class="btn btn-danger">Delete</button>
+                <button type="button" onclick="clear_canvas()" class="btn btn-danger">Clear All</button>
             </div>
 
             <!--<div id="modal-create" class="modal" align="center">
                 <div class="modal-content">
                     <h4 text-align="center">Create transition</h4>
                     <div class="input-field" text-align="center">
-                        <label for="start">from</label>&nbsp &nbsp 
+                        <label for="start">from</label>&nbsp &nbsp
                         <input  type= "text" id = "start" placeholder="enter state number" required><br/>
                         <label for="end">to</label> &nbsp &nbsp &nbsp &nbsp
                         <input type= "text" id = "end" placeholder="enter state number" required><br/>
                         <label for="input">input</label> &nbsp  &nbsp
-                        <input type= "text" id = "input" placeholder="enter path" required>     
+                        <input type= "text" id = "input" placeholder="enter path" required>
                     </div>
 
                     <div class="container" style="background-color:#f1f1f1">

@@ -104,9 +104,9 @@ function onObjectSelected(e) {
       canvas.discardActiveObject();
     }
 
-    if (isState && !isNewTransition && !isShiftDown && !isCtrlDown){ 
-      
-      activeObject.showTransitionAdjusters(); 
+    if (isState && !isNewTransition && !isShiftDown && !isCtrlDown){
+
+      activeObject.showTransitionAdjusters();
     }
 
 }
@@ -114,7 +114,7 @@ function onObjectSelected(e) {
 function onObjectMoving(e) {
 
   var activeObject = e.target;
-  
+
   var isState = activeObject.name[0] == "Q" ? true : false;
   var isAdjuster = activeObject.name[0] == "A" ? true : false;
 
@@ -156,5 +156,44 @@ function clear_canvas()
     canvas.transitionMap = new Map();
     canvas.remove(...canvas.getObjects());
 }
+
+//handles deletion of single objects
+function handle_delete(){
+  var selection = canvas.getActiveObject();
+  if (selection.name[0]=="Q"){   //if a
+    deleteState(selection);
+  }
+  else if (selection.name[0]=="T"){ //if selected the text of the transition
+    var transition = canvas.transitionMap.get(selection.name.slice(1))  //key after the T
+    deleteTransition(transition);
+  }
+}
+
+//deletes the transmision and updates the program info related to it
+function deleteTransition(transition){
+    transition.source.sourceTransitions.delete(transition.destination.name);
+    transition.destination.destinationTransitions.delete(transition.source.name);
+    canvas.transitionMap.delete(transition.source.name + "-" + transition.destination.name)
+    canvas.remove(transition.line);
+    canvas.remove(transition.adjuster);
+    canvas.remove(transition.text);
+    canvas.discardActiveObject();
+    canvas.requestRenderAll();
+}
+
+  function deleteState(state){
+    if (state.type === 'activeSelection') {
+        state.forEachObject(function(element) {
+            canvas.remove(element);
+        });
+    }
+    else{
+        canvas.remove(state);
+    }
+    canvas.discardActiveObject();
+    canvas.requestRenderAll();
+  }
+
+
 
 //#endregion
