@@ -1,7 +1,7 @@
 
 var canvas = new FSMCanvas('canvas');
 fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
-
+var json;
 var transitionArray = [];
 var isShiftDown = false;
 var isCtrlDown = false;
@@ -40,6 +40,29 @@ function onSelectionUpdated(e)
 function onSelectionCleared(e)
 {
   canvas.refresh();
+}
+
+function saveImage()
+{
+    var link = document.createElement('a');
+    link.href = canvas.toDataURL();
+    link.download = "machine.png";
+    link.click();
+
+    //call function to save the machine as a json
+    exportToJsonFile(json)
+}
+
+function exportToJsonFile(json)
+{
+    let str = JSON.stringify(json);
+    let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(str);
+    let exportFileDefaultName = 'machine.json';
+
+    let linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
 }
 
 function onBeforeSelectionCleared(e, selectionUpdated)
@@ -148,113 +171,16 @@ function getMouseCoords(event)
     return [posX,posY];
 }
 
+function handle_delete()
+{
+  canvas.handleDelete();
+}
+
 function clear_canvas()
 {
+  json = canvas.toJSON();
     transitionArray = []; //array that stores transition informations
-    canvas.stateMap = new Map();
-    canvas.stateIndexMap = new Map();
-    canvas.transitionMap = new Map();
-    canvas.remove(...canvas.getObjects());
+    canvas.clear();
 }
-
-var deleteIcon = "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Ebene_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='595.275px' height='595.275px' viewBox='200 215 230 470' xml:space='preserve'%3E%3Ccircle style='fill:%23F44336;' cx='299.76' cy='439.067' r='218.516'/%3E%3Cg%3E%3Crect x='267.162' y='307.978' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -222.6202 340.6915)' style='fill:white;' width='65.545' height='262.18'/%3E%3Crect x='266.988' y='308.153' transform='matrix(0.7071 0.7071 -0.7071 0.7071 398.3889 -83.3116)' style='fill:white;' width='65.544' height='262.179'/%3E%3C/g%3E%3C/svg%3E";
-var img = document.createElement('img');
-img.src = deleteIcon;
-fabric.Object.prototype.transparentCorners = false;
-  fabric.Object.prototype.cornerColor = 'blue';
-  fabric.Object.prototype.cornerStyle = 'circle';
-
-  fabric.Object.prototype.controls.deleteControl = new fabric.Control({
-    position: { x: 0.5, y: -0.5 },
-    offsetY: 16,
-    cursorStyle: 'pointer',
-    mouseUpHandler: deleteObject,
-    render: renderIcon,
-    cornerSize: 24
-  });
-  function Add() {
-    var tri = new fabric.Triangle({
-      width: 100, height: 100, left: 50, top: 300, stroke: 'black', fill:'black'});
-    
-
-    canvas.add(tri);
-    canvas.setActiveObject(tri);
-  }
-  function deleteObject(eventData, target) {
-		var canvas = target.canvas;
-		    canvas.remove(target);
-        canvas.requestRenderAll();
-  }
-  
-  function renderIcon(ctx, left, top, styleOverride, fabricObject) {
-    var size = this.cornerSize;
-    ctx.save();
-    ctx.translate(left, top);
-    ctx.rotate(fabric.util.degreesToRadians(fabricObject.angle));
-    ctx.drawImage(img, -size/2, -size/2, size, size);
-    ctx.restore();
-  }
-
-
-//handles deletion of single objects
-function handle_delete(){
-  var selection = canvas.getActiveObject();
-  if (selection.name[0]=="Q"){   //if a state is selected, delete it and its transitions
-    deleteState(selection);
-  }
-  else if (selection.name[0]=="T"){ //if selected the text of the transition
-    var transition = canvas.transitionMap.get(selection.name.slice(1))  //key string after first T
-    deleteTransition(transition); //delete the transition visual and update logic
-  }
-}
-
-//deletes the transmision and updates the program logic related to it
-function deleteTransition(transition){
-    transition.source.sourceTransitions.delete(transition.destination.name);
-    transition.destination.destinationTransitions.delete(transition.source.name);
-    canvas.transitionMap.delete(transition.source.name + "-" + transition.destination.name)
-    canvas.remove(transition.line);
-    canvas.remove(transition.adjuster);
-    canvas.remove(transition.text);
-    canvas.discardActiveObject();
-    canvas.requestRenderAll();
-}
-
-  function deleteState(state){
-    //remove the state visual
-    if (state.type === 'activeSelection') {
-        state.forEachObject(function(element) {
-            canvas.remove(element);
-        });
-    }
-    else{
-        canvas.remove(state);
-    }
-    canvas.discardActiveObject();
-    canvas.requestRenderAll();
-
-    //remove the connected transitions, logic updated in deleteTransition()
-    sources = state.sourceTransitions.values();
-    destinations = state.destinationTransitions.values();
-
-    let t = sources.next();
-    while(!t.done){
-      deleteTransition(t.value);
-      t = sources.next();
-    }
-
-    t = destinations.next();
-    while(!t.done){
-      deleteTransition(t.value);
-      t = destinations.next();
-    }
-
-    //update canvas map logic
-    canvas.stateIndexMap.remove(state.statenum)
-    canvas.stateMap.remove(state.name);
-  }
-
-
-
 
 //#endregion
