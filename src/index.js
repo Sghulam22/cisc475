@@ -5,6 +5,7 @@ fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
 var transitionArray = [];
 var isShiftDown = false;
 var isCtrlDown = false;
+var isObjectSelected = false;
 
 canvas.on({'selection:created': onObjectSelected,
             'selection:cleared': onSelectionCleared,
@@ -40,6 +41,7 @@ function onSelectionUpdated(e)
 function onSelectionCleared(e)
 {
   canvas.refresh();
+  isObjectSelected = false;
 }
 
 function onBeforeSelectionCleared(e, selectionUpdated)
@@ -69,6 +71,7 @@ function onBeforeSelectionCleared(e, selectionUpdated)
 
 function onObjectSelected(e) {
 
+    isObjectSelected = true; 
     var activeObject = e.target;
     var isNewTransition = false;
 
@@ -101,6 +104,7 @@ function onObjectSelected(e) {
       var text = prompt("Enter a comma delimited string for this transition");
       text != null ? activeObject.text = text : null;
 
+      canvas.updateTransitionValue(activeObject.name, text);
       canvas.discardActiveObject();
     }
 
@@ -114,7 +118,6 @@ function onObjectSelected(e) {
 function onObjectMoving(e) {
 
   var activeObject = e.target;
-
   var isState = activeObject.name[0] == "Q" ? true : false;
   var isAdjuster = activeObject.name[0] == "A" ? true : false;
 
@@ -132,6 +135,7 @@ function onObjectMoving(e) {
       transition.updateTextPosition(transition.source, activeObject);
     });
   }
+
   else if(isAdjuster)
   {
     activeObject.line.path[1][1] = activeObject.left;
@@ -145,12 +149,37 @@ function getMouseCoords(event)
     var posX = pointer.x;
     var posY = pointer.y;
 
-    return [posX,posY];
+    return [posX, posY];
 }
 
 function handle_delete()
 {
   canvas.handleDelete();
+}
+
+function saveImage()
+{
+    var link = document.createElement('a');
+    link.href = canvas.toDataURL();
+    link.download = "machine.jpg";
+    link.click();
+
+    var json = canvas.toJSON();
+    //call function to save the machine as a json
+    exportToJsonFile(json)
+}
+
+//function saves the canvas as a json object and saves it to a file.
+function exportToJsonFile(json)
+{
+    let str = JSON.stringify(json);
+    let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(str);
+    let exportFileDefaultName = 'machine.json';
+
+    let linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
 }
 
 function clear_canvas()

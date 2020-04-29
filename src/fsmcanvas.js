@@ -1,4 +1,3 @@
-
 class FSMCanvas extends fabric.Canvas{
 
     constructor(id)
@@ -30,6 +29,8 @@ class FSMCanvas extends fabric.Canvas{
 
     drawState(event)
     { 
+        if(isObjectSelected == true || isCtrlDown == true || isShiftDown == true){ return; }
+
         var stateNum = this.findOpenIndex();
 
         if(stateNum == -1)
@@ -55,6 +56,7 @@ class FSMCanvas extends fabric.Canvas{
 
         if(!this.transitionMap.has(transitionKey))
         {
+            //var input = window.prompt("please enter transition", "");
             var transition = new Transition(source, destination, canvas);
             this.transitionMap.set(transitionKey, transition);
             source.storeAsSourceTransition(destination, transition);
@@ -62,6 +64,13 @@ class FSMCanvas extends fabric.Canvas{
         }
         else  
             alert("cannot add duplicate transition");
+    }
+
+    updateTransitionValue(key, value)
+    {
+        var transition = this.transitionMap.get(key.slice(1));
+        transition.setValue(value);
+    }
     }
 
     refresh()
