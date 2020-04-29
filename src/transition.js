@@ -5,7 +5,7 @@ class Transition{
     {
         this.source = source;
         this.destination = destination;
-        this.name = "T";
+        this.name = this.name = "T" + source.name + "-" + destination.name;
         this.isSelfTransition = false;
         
         this.offsetX = Transition.calculateOffsetX(source, destination);
