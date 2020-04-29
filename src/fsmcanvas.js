@@ -51,9 +51,6 @@ class FSMCanvas extends fabric.Canvas{
 
     createTransition(source, destination)
     {
-        if(source.name == destination.name)
-            return;
-        
         var transitionKey = source.name + "-" + destination.name;
 
         if(!this.transitionMap.has(transitionKey))
