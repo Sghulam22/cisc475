@@ -40,7 +40,7 @@ function onSelectionUpdated(e)
 
 function onSelectionCleared(e)
 {
-  console.log("Ss")
+  canvas.refresh();
   isObjectSelected = false;
 }
 
