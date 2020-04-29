@@ -1,7 +1,7 @@
 
 var canvas = new FSMCanvas('canvas');
 fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
-var json;
+
 var transitionArray = [];
 var isShiftDown = false;
 var isCtrlDown = false;
@@ -40,29 +40,6 @@ function onSelectionUpdated(e)
 function onSelectionCleared(e)
 {
   canvas.refresh();
-}
-
-function saveImage()
-{
-    var link = document.createElement('a');
-    link.href = canvas.toDataURL();
-    link.download = "machine.png";
-    link.click();
-
-    //call function to save the machine as a json
-    exportToJsonFile(json)
-}
-
-function exportToJsonFile(json)
-{
-    let str = JSON.stringify(json);
-    let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(str);
-    let exportFileDefaultName = 'machine.json';
-
-    let linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
 }
 
 function onBeforeSelectionCleared(e, selectionUpdated)
@@ -178,7 +155,6 @@ function handle_delete()
 
 function clear_canvas()
 {
-  json = canvas.toJSON();
     transitionArray = []; //array that stores transition informations
     canvas.clear();
 }
