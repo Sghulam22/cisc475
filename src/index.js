@@ -157,6 +157,11 @@ function handle_delete()
   canvas.handleDelete();
 }
 
+function runMachine()
+{
+  var input = window.prompt("enter a language", "");
+  canvas.runAutomata(input);
+}
 function saveImage()
 {
     var link = document.createElement('a');
