@@ -66,4 +66,11 @@ class FSMCanvas extends fabric.Canvas{
         else  
             alert("cannot add duplicate transition");
     }
+
+    refresh()
+    {
+        this.stateMap.forEach(state => {
+           state.hideTransitionAdjusters(); 
+        });
+    }
 }

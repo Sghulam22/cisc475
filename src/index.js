@@ -7,6 +7,7 @@ var isShiftDown = false;
 var isCtrlDown = false;
 
 canvas.on({'selection:created': onObjectSelected,
+            'selection:cleared': onSelectionCleared,
             'selection:updated': onSelectionUpdated,
             'object:moving': onObjectMoving,
             'before:selection:cleared': onBeforeSelectionCleared
@@ -36,6 +37,11 @@ function onSelectionUpdated(e)
   onObjectSelected(e);
 }
 
+function onSelectionCleared(e)
+{
+  canvas.refresh();
+}
+
 function onBeforeSelectionCleared(e, selectionUpdated)
 {
     var activeObject = e.target;
@@ -43,11 +49,15 @@ function onBeforeSelectionCleared(e, selectionUpdated)
 
     if(selectionUpdated) { activeObject = e.deselected[0]; }
 
-    if (activeObject.name[0] == "Q" && nextObject.name[0] != "A") {
+    var isState = activeObject.name[0] == "Q" ? true : false;
+    var isAdjuster = activeObject.name[0] == "A" ? true : false;
+    var nextIsAdjuster = nextObject.name[0] == "A" ? true : false;
+
+    if (isState && !nextIsAdjuster) {
 
       activeObject.hideTransitionAdjusters();
     }
-    else if (activeObject.name[0] == "A" && nextObject.name[0] != "A") {
+    else if (isAdjuster && !nextIsAdjuster) {
 
       activeObject.animate('opacity', '0', {
         duration: 200,
@@ -61,7 +71,11 @@ function onObjectSelected(e) {
 
     var activeObject = e.target;
     var isNewTransition = false;
+
     var isState = activeObject.name[0] == "Q" ? true : false;
+    var isText = activeObject.name[0] == "T" ? true : false;
+
+    console.log(activeObject);
 
     if(isShiftDown && isState)
     {
@@ -80,6 +94,15 @@ function onObjectSelected(e) {
     {
       activeObject.drawAccept();
     }
+    else if(isCtrlDown && isText)
+    {
+      isCtrlDown = false;
+
+      var text = prompt("Enter a comma delimited string for this transition");
+      text != null ? activeObject.text = text : null;
+
+      canvas.discardActiveObject();
+    }
 
     if (isState && !isNewTransition && !isShiftDown && !isCtrlDown){ 
       
@@ -90,25 +113,29 @@ function onObjectSelected(e) {
 
 function onObjectMoving(e) {
 
-  if (e.target.name[0] == "Q" || e.target.name[0] == "Q") {
-    var p = e.target;
+  var activeObject = e.target;
+  
+  var isState = activeObject.name[0] == "Q" ? true : false;
+  var isAdjuster = activeObject.name[0] == "A" ? true : false;
 
-    p.sourceTransitions.forEach(transition => {
+  if (isState) {
 
-      transition.updatePathSource(p.left, p.top);
+      activeObject.sourceTransitions.forEach(transition => {
+      transition.updatePathSource(activeObject.left, activeObject.top);
+      transition.updateAdjusterPosition(activeObject, transition.destination);
+      transition.updateTextPosition(activeObject, transition.destination);
     });
 
-    p.destinationTransitions.forEach(transition => {
-
-      transition.updatePathDestination(p.left, p.top);
+      activeObject.destinationTransitions.forEach(transition => {
+      transition.updatePathDestination(activeObject.left, activeObject.top);
+      transition.updateAdjusterPosition(transition.source, activeObject);
+      transition.updateTextPosition(transition.source, activeObject);
     });
   }
-
-  if(e.target.name[0] == "A")
+  else if(isAdjuster)
   {
-    var a = e.target;
-    a.line.path[1][1] = a.left;
-    a.line.path[1][2] = a.top;
+    activeObject.line.path[1][1] = activeObject.left;
+    activeObject.line.path[1][2] = activeObject.top;
   }
 }
 

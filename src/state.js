@@ -82,6 +82,7 @@ class State extends fabric.Group{
         this.sourceTransitions.forEach(transition => {
 
             transition.adjuster.visible = true;
+            transition.text.visible = false;
 
             transition.adjuster.animate('opacity', '1', {
               duration: 200,
@@ -93,6 +94,7 @@ class State extends fabric.Group{
         this.destinationTransitions.forEach(transition => {
   
             transition.adjuster.visible = true;
+            transition.text.visible = false;
             
             transition.adjuster.animate('opacity', '1', {
               duration: 200,
@@ -106,6 +108,8 @@ class State extends fabric.Group{
     {
         this.sourceTransitions.forEach(transition => {
 
+            transition.text.visible = true;
+
             transition.adjuster.animate('opacity', '0', {
               duration: 200,
               onChange: canvas.renderAll.bind(canvas),
@@ -115,6 +119,8 @@ class State extends fabric.Group{
       
         this.destinationTransitions.forEach(transition => {
     
+            transition.text.visible = true;
+            
             transition.adjuster.animate('opacity', '0', {
                 duration: 200,
                 onChange: canvas.renderAll.bind(canvas),

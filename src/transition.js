@@ -5,7 +5,7 @@ class Transition{
     {
         this.source = source;
         this.destination = destination;
-        this.name = source.name + "-" + destination.name;
+        this.name = "T";
         
         this.offsetX = Transition.calculateOffsetX(source, destination);
         this.offsetY = Transition.calculateOffsetY(source, destination);
@@ -17,6 +17,17 @@ class Transition{
         this.adjuster = this.makeCurvePoint(this.offsetX, this.offsetY, this.line);
         this.adjuster.name = "A" + this.name;
         canvas.add(this.adjuster);
+
+        this.text = new fabric.Text("edit", { 
+
+            name: this.name,
+            left: this.adjuster.left,
+            top: this.adjuster.top,
+            fill: 'black',
+            selectable: true
+        });
+
+        canvas.add(this.text);
     }
 
     renderTransitionLine(source, destination)
@@ -37,6 +48,22 @@ class Transition{
         return line;
     }
 
+    updateTextPosition(source, destination)
+    {
+        this.text.left = Transition.calculateOffsetX(source, destination);
+        this.text.top = Transition.calculateOffsetY(source, destination);
+        this.text.setCoords();
+        this.text.selectable = true;
+    }
+
+    updateAdjusterPosition(source, destination)
+    {
+        this.adjuster.left = Transition.calculateOffsetX(source, destination);
+        this.adjuster.top = Transition.calculateOffsetY(source, destination);
+        this.adjuster.setCoords();
+        this.adjuster.selectable = true;
+    }
+
     updatePathSource(x, y)
     {
         this.line.path[0][1] = x;
@@ -51,12 +78,12 @@ class Transition{
 
     static calculateOffsetX(source, destination)
     {
-        return (destination.x + source.x)/2;
+        return (destination.left + source.left)/2;
     }
 
     static calculateOffsetY(source, destination)
     {
-        return (destination.y + source.y)/2;
+        return (destination.top + source.top)/2;
     }
 
     makeCurvePoint(left, top, line) {
