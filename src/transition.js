@@ -6,6 +6,7 @@ class Transition{
         this.source = source;
         this.destination = destination;
         this.name = "T" + source.name + "-" + destination.name;
+        this.value = null;
         
         this.offsetX = Transition.calculateOffsetX(source, destination);
         this.offsetY = Transition.calculateOffsetY(source, destination);
@@ -18,7 +19,8 @@ class Transition{
         this.adjuster.name = "A" + this.name;
         canvas.add(this.adjuster);
 
-        this.text = new fabric.Text("edit", { 
+        
+        this.text = new fabric.Text("text", { 
 
             name: this.name,
             left: this.adjuster.left,
@@ -28,6 +30,12 @@ class Transition{
         });
 
         canvas.add(this.text);
+
+    }
+
+    setValue(value)
+    {
+        this.value = value;
     }
 
     renderTransitionLine(source, destination)

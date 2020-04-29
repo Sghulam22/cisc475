@@ -1,7 +1,7 @@
 
 var canvas = new FSMCanvas('canvas');
 fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
-
+var json;
 var transitionArray = [];
 var isShiftDown = false;
 var isCtrlDown = false;
@@ -67,6 +67,7 @@ function onBeforeSelectionCleared(e, selectionUpdated)
     }
 }
 
+
 function onObjectSelected(e) {
 
     var activeObject = e.target;
@@ -101,6 +102,12 @@ function onObjectSelected(e) {
       var text = prompt("Enter a comma delimited string for this transition");
       text != null ? activeObject.text = text : null;
 
+      canvas.updateTransitionValue(activeObject.name, text);
+
+      canvas.debugLoopTransitions();
+     
+      //create mmethod on fsm canvas. pass in active object.name, which is key of transiton. find transtion
+      
       canvas.discardActiveObject();
     }
 
@@ -114,7 +121,6 @@ function onObjectSelected(e) {
 function onObjectMoving(e) {
 
   var activeObject = e.target;
-
   var isState = activeObject.name[0] == "Q" ? true : false;
   var isAdjuster = activeObject.name[0] == "A" ? true : false;
 
@@ -153,10 +159,37 @@ function handle_delete()
   canvas.handleDelete();
 }
 
+function saveImage()
+{
+    var link = document.createElement('a');
+    link.href = canvas.toDataURL();
+    link.download = "machine.jpg";
+    link.click();
+
+    json = canvas.toJSON();
+    //call function to save the machine as a json
+    exportToJsonFile(json)
+}
+
+
+//function saves the canvas as a json object and saves it to a file.
+function exportToJsonFile(json)
+{
+    let str = JSON.stringify(json);
+    let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(str);
+    let exportFileDefaultName = 'machine.json';
+
+    let linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+}
+
 function clear_canvas()
 {
     transitionArray = []; //array that stores transition informations
     canvas.clear();
+    canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
 }
 
 //#endregion

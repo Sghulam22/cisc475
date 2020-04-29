@@ -1,5 +1,3 @@
-
-
 class State extends fabric.Group{
 
     constructor(stateNum, x, y)
