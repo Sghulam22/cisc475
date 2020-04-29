@@ -160,16 +160,16 @@ function clear_canvas()
 //handles deletion of single objects
 function handle_delete(){
   var selection = canvas.getActiveObject();
-  if (selection.name[0]=="Q"){   //if a
+  if (selection.name[0]=="Q"){   //if a state is selected, delete it and its transitions
     deleteState(selection);
   }
   else if (selection.name[0]=="T"){ //if selected the text of the transition
-    var transition = canvas.transitionMap.get(selection.name.slice(1))  //key after the T
-    deleteTransition(transition);
+    var transition = canvas.transitionMap.get(selection.name.slice(1))  //key string after first T
+    deleteTransition(transition); //delete the transition visual and update logic
   }
 }
 
-//deletes the transmision and updates the program info related to it
+//deletes the transmision and updates the program logic related to it
 function deleteTransition(transition){
     transition.source.sourceTransitions.delete(transition.destination.name);
     transition.destination.destinationTransitions.delete(transition.source.name);
@@ -182,6 +182,7 @@ function deleteTransition(transition){
 }
 
   function deleteState(state){
+    //remove the state visual
     if (state.type === 'activeSelection') {
         state.forEachObject(function(element) {
             canvas.remove(element);
@@ -192,6 +193,26 @@ function deleteTransition(transition){
     }
     canvas.discardActiveObject();
     canvas.requestRenderAll();
+
+    //remove the connected transitions, logic updated in deleteTransition()
+    sources = state.sourceTransitions.values();
+    destinations = state.destinationTransitions.values();
+
+    let t = sources.next();
+    while(!t.done){
+      deleteTransition(t.value);
+      t = sources.next();
+    }
+
+    t = destinations.next();
+    while(!t.done){
+      deleteTransition(t.value);
+      t = destinations.next();
+    }
+
+    //update canvas map logic
+    canvas.stateIndexMap.remove(state.statenum)
+    canvas.stateMap.remove(state.name);
   }
 
 
