@@ -73,4 +73,74 @@ class FSMCanvas extends fabric.Canvas{
            state.hideTransitionAdjusters(); 
         });
     }
+
+    clear()
+    {
+        this.stateMap = new Map();
+        this.stateIndexMap = new Map();
+        this.transitionMap = new Map();
+        this.remove(...this.getObjects());
+    }
+
+    //handles deletion of single objects
+    handleDelete(){
+        var selection = this.getActiveObject();
+
+        if (selection.name[0]=="Q"){   //if a state is selected, delete it and its transitions
+            this.deleteState(selection);
+        }
+        else if (selection.name[0]=="T"){ //if selected the text of the transition
+            var transition = this.transitionMap.get(selection.name.slice(1))  //key string after first T
+            this.deleteTransition(transition); //delete the transition visual and update logic
+        }
+    }
+  
+     //deletes the transmision and updates the program logic related to it
+    deleteTransition(transition){
+
+      transition.source.sourceTransitions.delete(transition.destination.name);
+      transition.destination.destinationTransitions.delete(transition.source.name);
+      this.transitionMap.delete(transition.source.name + "-" + transition.destination.name)
+      this.remove(transition.line);
+      this.remove(transition.adjuster);
+      this.remove(transition.text);
+      this.discardActiveObject();
+      this.requestRenderAll();
+    }
+  
+    deleteState(state){
+      //remove the state visual
+      if (state.type === 'activeSelection') 
+      {
+          state.forEachObject(function(element){
+              this.remove(element);
+          });
+      }
+      else{
+          this.remove(state);
+      }
+
+      this.discardActiveObject();
+      this.requestRenderAll();
+  
+      //remove the connected transitions, logic updated in deleteTransition()
+      var sources = state.sourceTransitions.values();
+      var destinations = state.destinationTransitions.values();
+  
+      let t = sources.next();
+      while(!t.done){
+        this.deleteTransition(t.value);
+        t = sources.next();
+      }
+  
+      t = destinations.next();
+      while(!t.done){
+        this.deleteTransition(t.value);
+        t = destinations.next();
+      }
+  
+      //update canvas map logic
+      this.stateIndexMap.delete(state.stateNum);
+      this.stateMap.delete(state.name);
+    }
 }
