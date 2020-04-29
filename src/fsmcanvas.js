@@ -38,6 +38,11 @@ class FSMCanvas extends fabric.Canvas{
             return;
         }
 
+        else if(isObjectSelected == true)
+        {
+            return;
+        }
+
         //should not be allowed to add state if ctrl or shift is pressed
         else if(isCtrlDown == true || isShiftDown == true)
         {

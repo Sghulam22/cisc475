@@ -32,6 +32,7 @@ class State extends fabric.Group{
             left: this.left,
             top: this.top,
         });
+        
         this.text = new fabric.Text(this.name, { 
 
             left: this.left,

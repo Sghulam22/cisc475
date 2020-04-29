@@ -5,6 +5,7 @@ var json;
 var transitionArray = [];
 var isShiftDown = false;
 var isCtrlDown = false;
+var isObjectSelected = false;
 
 canvas.on({'selection:created': onObjectSelected,
             'selection:cleared': onSelectionCleared,
@@ -39,7 +40,8 @@ function onSelectionUpdated(e)
 
 function onSelectionCleared(e)
 {
-  canvas.refresh();
+  console.log("Ss")
+  isObjectSelected = false;
 }
 
 function onBeforeSelectionCleared(e, selectionUpdated)
@@ -70,6 +72,7 @@ function onBeforeSelectionCleared(e, selectionUpdated)
 
 function onObjectSelected(e) {
 
+    isObjectSelected = true; 
     var activeObject = e.target;
     var isNewTransition = false;
 
@@ -138,6 +141,7 @@ function onObjectMoving(e) {
       transition.updateTextPosition(transition.source, activeObject);
     });
   }
+
   else if(isAdjuster)
   {
     activeObject.line.path[1][1] = activeObject.left;
@@ -151,7 +155,7 @@ function getMouseCoords(event)
     var posX = pointer.x;
     var posY = pointer.y;
 
-    return [posX,posY];
+    return [posX, posY];
 }
 
 function handle_delete()
