@@ -62,6 +62,9 @@ class FSMCanvas extends fabric.Canvas{
 
     createTransition(source, destination)
     {
+        if(source.name == destination.name)
+            return;
+        
         var transitionKey = source.name + "-" + destination.name;
 
         if(!this.transitionMap.has(transitionKey))
@@ -76,10 +79,6 @@ class FSMCanvas extends fabric.Canvas{
             alert("cannot add duplicate transition");
     }
 
-    runAutomata(
-       
-    )
-
     updateTransitionValue(key, value)
     {
         var transition = this.transitionMap.get(key.slice(1));
@@ -89,11 +88,44 @@ class FSMCanvas extends fabric.Canvas{
     debugLoopTransitions()
     {
         this.transitionMap.forEach(e => {
-            console.log(e.name + ", " + e.value);
+            var s = e.source; 
+            console.log(s.isAcceptState);
+            console.log(e.name + ", " + e.value, e.source, e.destination);
         });
     }
 
+    runAutomata(input)
+    {
+       
+        var currentState;
+        this.transitionMap.forEach(e => {
+            
+            var temp = e.source;
+            
+            if(temp.stateNum == 0)
+                currentState = temp;  
+        });
 
+        for(var i=0; i<input.length; i++)
+        {
+            this.transitionMap.forEach(e => {
+
+                var arr = e.value.split(",");
+
+                if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(i)) )
+                {
+                    console.log("moved to: "+e.destination.stateNum + ", from: "+ e.source.stateNum +", on: "+ e.value);
+                    currentState = e.destination;
+                }
+            });
+        }
+
+        if(currentState.isAcceptState)
+            alert(true);
+        else if(!currentState.isAcceptState)    
+            alert(false);  
+    }
+    
     refresh()
     {
         this.stateMap.forEach(state => {
