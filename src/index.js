@@ -1,5 +1,6 @@
 
 var canvas = new FSMCanvas('canvas');
+var fsm = new FSM(canvas.transitionMap);
 fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
 
 var transitionArray = [];
@@ -160,7 +161,7 @@ function handle_delete()
 function runMachine()
 {
   var input = window.prompt("enter a language", "");
-  canvas.runAutomata(input);
+  fsm.runAutomata(input);
 }
 
 function saveImage()

@@ -72,36 +72,6 @@ class FSMCanvas extends fabric.Canvas{
         var transition = this.transitionMap.get(key.slice(1));
         transition.setValue(value);
     }
-
-    runAutomata(input)
-    {  
-        var currentState;
-        this.transitionMap.forEach(e => {
-            
-            var temp = e.source;
-            
-            if(temp.stateNum == 0)
-                currentState = temp;  
-        });
-
-        for(var i=0; i<input.length; i++)
-        {
-            this.transitionMap.forEach(e => {
-
-                var arr = e.value.split(",");
-
-                if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(i)) )
-                {
-                    currentState = e.destination;
-                }
-            });
-        }
-
-        if(currentState.isAcceptState)
-            alert(true);
-        else if(!currentState.isAcceptState)    
-            alert(false);  
-    }
     
     refresh()
     {
@@ -140,6 +110,7 @@ class FSMCanvas extends fabric.Canvas{
       this.remove(transition.line);
       this.remove(transition.adjuster);
       this.remove(transition.text);
+      this.remove(transition.directionArrow);
       this.discardActiveObject();
       this.requestRenderAll();
     }
