@@ -31,6 +31,11 @@ document.onkeyup = function(e){
     isCtrlDown = false;
 }
 
+//Event Handler for file reading
+/*document.getElementById('file-input')
+  .addEventListener('change', openFile, false);
+*/
+
 //#region: Event Handlers
 
 function onSelectionUpdated(e)
@@ -171,7 +176,7 @@ function saveImage()
     link.download = "machine.jpg";
     link.click();
 
-    var json = canvas.toJSON();
+    //var json = canvas.toJSON();
     //call function to save the machine as a json
     exportToJsonFile(json)
 }
@@ -191,8 +196,48 @@ function exportToJsonFile(json)
 
 function clear_canvas()
 {
+
+    json = canvas.toJSON();
     transitionArray = []; //array that stores transition informations
     canvas.clear();
+
+    canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
+    //console.log(json)
 }
 
+//make function to be able to open json file, read it and then be able to set the canvas to the contents of the json file
+
+function loadJsonFile() {
+  var input, file, fr;
+
+  if (typeof window.FileReader !== 'function') {
+    alert("The file API isn't supported on this browser yet.");
+    return;
+  }
+
+  input = document.getElementById('fileinput');
+  if (!input) {
+    alert(" couldn't find the fileinput element.");
+  }
+  else if (!input.files) {
+    alert("This browser doesn't seem to support the `files` property of file inputs.");
+  }
+  else if (!input.files[0]) {
+    alert("Please select a file before clicking 'Load'");
+  }
+  else {
+    file = input.files[0];
+    fr = new FileReader();
+    fr.onload = receivedText;
+    fr.readAsText(file);
+  }
+
+  function receivedText(e) {
+    let lines = e.target.result;
+    var newArr = JSON.parse(lines); 
+    canvas.loadFromJSON(newArr, canvas.renderAll.bind(canvas));
+  }
+}//end of JSON file load function
+
 //#endregion
+
