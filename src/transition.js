@@ -8,6 +8,8 @@ class Transition{
         this.name = this.name = "T" + source.name + "-" + destination.name;
         this.isSelfTransition = false;
         this.value = null;
+        this.name = this.name = "T" + source.name + "-" + destination.name;
+        this.isSelfTransition = false;
         
         this.offsetX = Transition.calculateOffsetX(source, destination);
         this.offsetY = Transition.calculateOffsetY(source, destination);
