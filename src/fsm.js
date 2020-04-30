@@ -9,6 +9,7 @@ class FSM {
 
     runAutomata(input)
     {  
+        var isStuck = false;
         var currentState;
         this.transitionMap.forEach(e => {
             
@@ -20,20 +21,26 @@ class FSM {
 
         for(var i=0; i<input.length; i++)
         {
+            var flag = 0;
             this.transitionMap.forEach(e => {
 
                 var arr = e.value.split(",");
 
                 if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(i)) )
                 {
+                    flag = 1;
+                    console.log("moved to: "+e.destination.stateNum + ", from: "+ e.source.stateNum +", on: "+ e.value);
                     currentState = e.destination;
                 }
             });
+
+            if(flag == 0)
+                isStuck = true;
         }
 
-        if(currentState.isAcceptState)
+        if(currentState.isAcceptState && isStuck == false)
             this.showSuccess();
-        else if(!currentState.isAcceptState)    
+        else if(!currentState.isAcceptState || isStuck == true)    
             this.showFailure();
     }
 
