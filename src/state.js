@@ -27,7 +27,7 @@ class State extends fabric.Group{
 
             strokeWidth: 5,
             radius: 50,
-            fill: '#fff',
+            fill: 'white',
             stroke: 'black',
             left: this.left,
             top: this.top,
