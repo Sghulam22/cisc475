@@ -6,6 +6,7 @@ class FSMCanvas extends fabric.Canvas{
         this.selection = false;
         this.setHeight(window.innerHeight / 1.1);
         this.setWidth(window.innerWidth);
+        this.backgroundColor = "#ffffff";
 
         this.stateMap = new Map();
         this.stateIndexMap = new Map();
@@ -71,47 +72,6 @@ class FSMCanvas extends fabric.Canvas{
         var transition = this.transitionMap.get(key.slice(1));
         transition.setValue(value);
     }
-
-    debugLoopTransitions()
-    {
-        this.transitionMap.forEach(e => {
-            var s = e.source; 
-            console.log(s.isAcceptState);
-            console.log(e.name + ", " + e.value, e.source, e.destination);
-        });
-    }
-
-    runAutomata(input)
-    {
-       
-        var currentState;
-        this.transitionMap.forEach(e => {
-            
-            var temp = e.source;
-            
-            if(temp.stateNum == 0)
-                currentState = temp;  
-        });
-
-        for(var i=0; i<input.length; i++)
-        {
-            this.transitionMap.forEach(e => {
-
-                var arr = e.value.split(",");
-
-                if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(i)) )
-                {
-                    console.log("moved to: "+e.destination.stateNum + ", from: "+ e.source.stateNum +", on: "+ e.value);
-                    currentState = e.destination;
-                }
-            });
-        }
-
-        if(currentState.isAcceptState)
-            alert(true);
-        else if(!currentState.isAcceptState)    
-            alert(false);  
-    }
     
     refresh()
     {
@@ -150,6 +110,7 @@ class FSMCanvas extends fabric.Canvas{
       this.remove(transition.line);
       this.remove(transition.adjuster);
       this.remove(transition.text);
+      this.remove(transition.directionArrow);
       this.discardActiveObject();
       this.requestRenderAll();
     }

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel ="stylesheet" href="../css/index.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src = "../library/fabric.min.js" type ="text/javascript"></script>
 
         <title>welcome to automata </title>
@@ -12,14 +12,16 @@
 
     <body>
         <nav class="navbar navbar-dark bg-dark" id="nav">
-            <h3>CISC 475</h3>
+            <h3>FSM Editor</h3>
+            <h3 id="resultDisplay" style="position: absolute; right: 45%;"></h3>
             <div id="button_div">
                 <!-- <button id="addState" type="button" onclick="addState()" class="btn btn-dark">add state</button> -->
                 <!-- <button id="addAcceptState" type="button" onclick="addAcceptState()" class="btn btn-dark">add Accept State</button> -->
                 <!-- <button type="button" onclick="Add()" class="btn btn-dark">add an arrowhead</button> -->
                 <!-- <button type="button" onclick="document.getElementById('modal-create').style.display='block'" class="btn btn-dark">add transition</button> -->
-                <button type="button" onclick=" runMachine()" class="btn btn-dark">run</button>
-                <button type="button" id="save" onclick="saveImage()" class="btn btn-dark">save Machine</button>
+                
+                <button type="button" onclick=" runMachine()" class="btn btn-dark">Run</button>
+                <button type="button" id="save" onclick="saveImage()" class="btn btn-dark">Export</button>
                 <!-- <button type="button" onclick="reload()" class="btn btn-danger">reload</button> -->
                 <button type="button" onclick="handle_delete()" class="btn btn-danger">Delete</button>
                 <button type="button" onclick="clear_canvas()" class="btn btn-danger">Clear All</button>
@@ -59,9 +61,12 @@
 
         </nav>
         <canvas id="canvas" tabindex="0" width ="1200" height="477"></canvas>
+
         <script src = "fsmcanvas.js" type ="text/javascript"></script>
+        <script src = "fsm.js" type="text/javascript"></script>
         <script src = "state.js" type ="text/javascript"></script>
         <script src = "transition.js" type ="text/javascript"></script>
         <script src = "index.js" type ="text/javascript"></script>
+
     </body>
 </html>

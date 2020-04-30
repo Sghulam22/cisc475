@@ -1,5 +1,6 @@
 
 var canvas = new FSMCanvas('canvas');
+var fsm = new FSM(canvas.transitionMap);
 fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
 
 var transitionArray = [];
@@ -78,8 +79,6 @@ function onObjectSelected(e) {
     var isState = activeObject.name[0] == "Q" ? true : false;
     var isText = activeObject.name[0] == "T" ? true : false;
 
-    console.log(activeObject);
-
     if(isShiftDown && isState)
     {
       canvas.discardActiveObject();
@@ -125,12 +124,14 @@ function onObjectMoving(e) {
 
       activeObject.sourceTransitions.forEach(transition => {
       transition.updatePathSource(activeObject.left, activeObject.top);
+      transition.updateArrowAngleAndPosition(activeObject, transition.destination);
       transition.updateAdjusterPosition(activeObject, transition.destination);
       transition.updateTextPosition(activeObject, transition.destination);
     });
 
       activeObject.destinationTransitions.forEach(transition => {
       transition.updatePathDestination(activeObject.left, activeObject.top);
+      transition.updateArrowAngleAndPosition(transition.source, activeObject);
       transition.updateAdjusterPosition(transition.source, activeObject);
       transition.updateTextPosition(transition.source, activeObject);
     });
@@ -160,7 +161,7 @@ function handle_delete()
 function runMachine()
 {
   var input = window.prompt("enter a language", "");
-  canvas.runAutomata(input);
+  fsm.runAutomata(input);
 }
 
 function saveImage()
