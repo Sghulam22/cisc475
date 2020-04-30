@@ -82,6 +82,7 @@ class State extends fabric.Group{
 
             transition.adjuster.visible = true;
             transition.text.visible = false;
+            transition.directionArrow.visible = false;
 
             transition.adjuster.animate('opacity', '1', {
               duration: 200,
@@ -94,6 +95,7 @@ class State extends fabric.Group{
   
             transition.adjuster.visible = true;
             transition.text.visible = false;
+            transition.directionArrow.visible = false;
             
             transition.adjuster.animate('opacity', '1', {
               duration: 200,
@@ -107,6 +109,7 @@ class State extends fabric.Group{
     {
         this.sourceTransitions.forEach(transition => {
 
+            transition.directionArrow.visible = true;
             transition.text.visible = true;
 
             transition.adjuster.animate('opacity', '0', {
@@ -117,7 +120,8 @@ class State extends fabric.Group{
         });
       
         this.destinationTransitions.forEach(transition => {
-    
+            
+            transition.directionArrow.visible = true;
             transition.text.visible = true;
             
             transition.adjuster.animate('opacity', '0', {

@@ -78,8 +78,6 @@ function onObjectSelected(e) {
     var isState = activeObject.name[0] == "Q" ? true : false;
     var isText = activeObject.name[0] == "T" ? true : false;
 
-    console.log(activeObject);
-
     if(isShiftDown && isState)
     {
       canvas.discardActiveObject();
@@ -125,12 +123,14 @@ function onObjectMoving(e) {
 
       activeObject.sourceTransitions.forEach(transition => {
       transition.updatePathSource(activeObject.left, activeObject.top);
+      transition.updateArrowAngleAndPosition(activeObject, transition.destination);
       transition.updateAdjusterPosition(activeObject, transition.destination);
       transition.updateTextPosition(activeObject, transition.destination);
     });
 
       activeObject.destinationTransitions.forEach(transition => {
       transition.updatePathDestination(activeObject.left, activeObject.top);
+      transition.updateArrowAngleAndPosition(transition.source, activeObject);
       transition.updateAdjusterPosition(transition.source, activeObject);
       transition.updateTextPosition(transition.source, activeObject);
     });

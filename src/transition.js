@@ -22,12 +22,10 @@ class Transition{
         canvas.add(this.line);
         canvas.sendToBack(this.line);
 
-        this.adjuster = this.makeCurvePoint(this.offsetX, this.offsetY, this.line);
+        this.adjuster = this.createCurveAdjuster(this.offsetX, this.offsetY, this.line);
         this.adjuster.name = "A" + this.name;
-        canvas.add(this.adjuster);
 
-        
-        this.text = new fabric.Text("text", { 
+        this.text = new fabric.Text("edit", { 
 
             name: this.name,
             left: this.adjuster.left - 50,
@@ -36,8 +34,55 @@ class Transition{
             selectable: true
         });
 
-        canvas.add(this.text);
+        this.directionArrow = new fabric.Triangle({
+            name: "DirectionArrow",
+            left: this.adjuster.left,
+            top: this.adjuster.top,
+            fill: 'black',
+            width: 30,
+            height: 30,
+            selectable: true,
+            angle: this.determineArrowAngle(source.left, source.top, destination.left, destination.top)
+        });
 
+        canvas.add(this.text);
+        canvas.add(this.adjuster);
+        canvas.add(this.directionArrow);
+    }
+
+    createCurveAdjuster(left, top, line) {
+        var c = new fabric.Circle({
+        left: left,
+        top: top,
+        strokeWidth: 8,
+        radius: 14,
+        fill: '#fff',
+        stroke: '#666'
+        });
+
+        c.hasBorders = c.hasControls = false;
+        c.visible = false;
+        c.line = line
+
+        return c;
+    }
+
+    determineArrowAngle(x1, y1, x2, y2) {
+
+        var angle = 0, x, y;
+    
+        x = (x2 - x1);
+        y = (y2 - y1);
+    
+        if (x === 0) {
+          angle = (y === 0) ? 0 : (y > 0) ? Math.PI / 2 : Math.PI * 3 / 2;
+        } else if (y === 0) {
+          angle = (x > 0) ? 0 : Math.PI;
+        } else {
+          angle = (x < 0) ? Math.atan(y / x) + Math.PI : (y < 0) ? Math.atan(y / x) + (2 * Math.PI) : Math.atan(y / x);
+        }
+    
+        return (angle * 180 / Math.PI + 90);
     }
 
     setValue(value)
@@ -88,6 +133,18 @@ class Transition{
     {
         this.line.left = x - 15;
         this.line.top = y - 110;
+    }
+
+    updateArrowAngleAndPosition(source, destination)
+    {
+        this.directionArrow.set({
+            left: Transition.calculateOffsetX(source, destination),
+            top: Transition.calculateOffsetY(source, destination),
+            angle: this.determineArrowAngle(source.left, source.top, destination.left, destination.top)
+        });
+
+        this.directionArrow.setCoords();
+        this.directionArrow.selectable = true;
     }
 
     updateTextPosition(source, destination)
@@ -151,22 +208,5 @@ class Transition{
     static calculateOffsetY(source, destination)
     {
         return (destination.top + source.top)/2;
-    }
-
-    makeCurvePoint(left, top, line) {
-        var c = new fabric.Circle({
-        left: left,
-        top: top,
-        strokeWidth: 8,
-        radius: 14,
-        fill: '#fff',
-        stroke: '#666'
-        });
-
-        c.hasBorders = c.hasControls = false;
-        c.visible = false;
-        c.line = line
-
-        return c;
     }
 }
