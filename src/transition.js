@@ -25,35 +25,45 @@ class Transition{
         canvas.sendToBack(this.line);
 
         this.adjuster = this.createCurveAdjuster(this.offsetX, this.offsetY, this.line);
-        this.adjuster.name = "A" + this.name;
+        this.text = this.createText(this.offsetX, this.offsetY);
+        this.directionArrow = this.createDirectionArrow(this.offsetX, this.offsetY, this.source, this.destination);
 
-        this.text = new fabric.Text("edit", { 
+        canvas.add(this.adjuster);
+        canvas.add(this.text);
+        this.isSelfTransition ? null : canvas.add(this.directionArrow);
+    }
+
+    createText(left, top)
+    {
+        var text = new fabric.Text("edit", { 
 
             name: this.name,
-            left: this.adjuster.left - 50,
-            top: this.adjuster.top - 50,
+            left: left - 50,
+            top: top - 50,
             fill: 'black',
             selectable: true
         });
+        return text;
+    }
 
-        this.directionArrow = new fabric.Triangle({
+    createDirectionArrow(left, top, source, destination)
+    {
+        var directionArrow = new fabric.Triangle({
             name: "DirectionArrow",
-            left: this.adjuster.left,
-            top: this.adjuster.top,
+            left: left,
+            top: top,
             fill: 'black',
             width: 30,
             height: 30,
             selectable: true,
             angle: this.determineArrowAngle(source.left, source.top, destination.left, destination.top)
         });
-
-        canvas.add(this.text);
-        canvas.add(this.adjuster);
-        canvas.add(this.directionArrow);
+        return directionArrow;
     }
 
     createCurveAdjuster(left, top, line) {
         var c = new fabric.Circle({
+        name: "A" + this.name,
         left: left,
         top: top,
         strokeWidth: 8,
