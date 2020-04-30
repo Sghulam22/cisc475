@@ -11,7 +11,7 @@ class FSMCanvas extends fabric.Canvas{
         this.stateMap = new Map();
         this.stateIndexMap = new Map();
         this.transitionMap = new Map();
-        this.MAX_STATES = 20;
+        this.MAX_STATES = 12;
 
         this.on('mouse:dblclick', function(event) {
             this.drawState(event);
