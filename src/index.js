@@ -161,7 +161,7 @@ function handle_delete()
 function runMachine()
 {
   var input = window.prompt("enter a language", "");
-  fsm.runAutomata(input);
+  fsm.startMachine(input);
 }
 
 function saveImage()
