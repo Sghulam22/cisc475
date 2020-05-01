@@ -9,8 +9,10 @@ class FSM {
 
     runAutomata(input)
     {  
-        var isStuck = false;
+        var isStuck = false; //flag to see if transition is stuck
         var currentState;
+
+        //find Q0
         this.transitionMap.forEach(e => {
             
             var temp = e.source;
@@ -22,6 +24,7 @@ class FSM {
         for(var i=0; i<input.length; i++)
         {
             var flag = 0;
+            
             this.transitionMap.forEach(e => {
 
                 var arr = e.value.split(",");
