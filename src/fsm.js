@@ -79,18 +79,19 @@ class FSM {
 
         for(var i=0; i<input.length; i++)
         {
-            var flag = false; 
-            
+            var flag = 0;
             this.transitionMap.forEach(e => {
                 var arr = e.value.split(',');
             
-                if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(i)) ){
+                if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(i)) )
+                {
 
-                    flag = true;
+                    flag = 1;
                     //has no alternative paths, move to next state
                     if(this.hasMultiplePaths(currentState, input.charAt(i)) == 0){
-                        console.log("moved to: "+e.destination.stateNum+ ", from: "+ e.source.stateNum +", on: "+ e.value);
                         currentState = e.destination;
+                        console.log("moved to: "+e.destination.stateNum+ ", from: "+ e.source.stateNum +", on: "+ e.value);
+                        console.log(input.charAt(i));
                     }
                     
                     //has an alternative path, choose a state and add state to visited
@@ -103,9 +104,11 @@ class FSM {
                         if(visitedMap.get(e.source.stateNum) == undefined)
                         {
                             var temp = [];
-                            temp.push(e.destination.stateNum);
-                            visitedMap.set(e.source.stateNum, temp) 
 
+                            if(e.source.stateNum != e.destination.stateNum){
+                                temp.push(e.destination.stateNum);
+                                visitedMap.set(e.source.stateNum, temp) 
+                            }
                             currentState = e.destination;
                             console.log("moved to: "+e.destination.stateNum+ ", from: "+ e.source.stateNum +", on: "+ e.value);
                           
@@ -119,24 +122,32 @@ class FSM {
                             this.transitionMap.forEach(t => {
                                 var arr2 = t.value.split(',');
 
+                                //check if next state has not been explored yet
                                 if(currentState.stateNum == t.source.stateNum && arr2.includes(input.charAt(i)) && temp.includes(t.source.stateNum) != true) 
                                 {
                                     currentState = t.destination;
                                     console.log("moved to: "+t.destination.stateNum+ ", from: "+ t.source.stateNum +", on: "+ t.value);
-                                    temp.push(currentState.stateNum);
-                                    visitedMap.set(t.source.stateNum, temp)                                           
+                                    
+                                    if(e.source.stateNum != e.destination.stateNum){
+                                        temp.push(currentState.stateNum);
+                                        visitedMap.set(t.source.stateNum, temp)        
+                                    }                                   
                                 }
                             })
-                        } 
+                        }    
                     }
                 }
             })
 
             //make sure it has read the whole string
-            if(flag == false)
+            if(flag == 0){
                 isStuck = true;
+                console.log("isstuck: ",isStuck);
+            }
             
         }
+
+        console.log(currentState.isAcceptState, currentState.stateNum)
 
         if(currentState.isAcceptState == true && isStuck == false)
         {
@@ -166,67 +177,88 @@ class FSM {
         var currentState = state.source;
         var pathsLeft = false;
         var isStuck = false;
+        var counter = index;
+        // stack.print();
+        // indexStack.print();
 
 
-        for(var i = index; i<input.length; i++)
+        while(counter < input.length)
         {
+            var incremented = false;
+
             this.transitionMap.forEach(e => {
                 var arr = e.value.split(',');
 
-                if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(i)) )
+                if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(counter)))
                 {
-            
-                    if(this.hasMultiplePaths(currentState, input.charAt(i) != 0 && state.source.stateNum  != currentState.stateNum ))
-                    {
-                        stack.push(e);
-                        indexStack.push(i);
+                    
+                    console.log("passed index is: ",index)
+                    console.log(arr)
+                    console.log("index is: ",counter);
+                    console.log("input:" ,charAt(counter))
+                    console.log("currstate:",currentState.stateNum,"eval:",e.value)
+                    // if(this.hasMultiplePaths(currentState, input.charAt(i) != 0 && state.source.stateNum  != currentState.stateNum ))
+                    // {
+                    //     stack.push(e);
+                    //     indexStack.push(i);
 
-                        pathsLeft = true;
-                    }
+                    //     pathsLeft = true;
+                    // }
 
                     if(visitedMap.get(e.source.stateNum) == undefined)
+                    {
+                        if(e.source.stateNum != e.destination.stateNum)
                         {
                             var temp = [];
                             temp.push(e.destination.stateNum);
                             visitedMap.set(e.source.stateNum, temp);
-                            currentState = e.destination;
-                            console.log("moved to: "+e.destination.stateNum+ ", from: "+ e.source.stateNum +", on: "+ e.value);
-                            console.log(i);
                         }
-                        
-                        else
-                        {
-                            var visited = visitedMap.get(e.source.stateNum);
-                            var found = false;
-                            this.transitionMap.forEach(t => {
-                                var arr2 = t.value.split(',');
 
-                                if(currentState.stateNum == t.source.stateNum && arr2.includes(input.charAt(i)) && visited.includes(t.destination.stateNum) != true) 
+                        currentState = e.destination;
+                        console.log("moved to: "+e.destination.stateNum+ ", from: "+ e.source.stateNum +", on: "+ e.value);
+                        console.log(counter);
+                    }
+                    
+                    else
+                    {
+                        var visited = visitedMap.get(e.source.stateNum);
+                        var found = false;
+                        this.transitionMap.forEach(t => {
+                            var arr2 = t.value.split(',');
+
+                            if(currentState.stateNum == t.source.stateNum && arr2.includes(input.charAt(i)) && visited.includes(t.destination.stateNum) != true) 
+                            {
+                                found = true; 
+                                currentState = t.destination;
+                                console.log("moved to: "+t.destination.stateNum+ ", from: "+ t.source.stateNum +", on: "+ t.value);
+                                
+                                if(e.source.stateNum != e.destination.stateNum)
                                 {
-                                    found = true; 
-                                    currentState = t.destination;
-                                    console.log("moved to: "+t.destination.stateNum+ ", from: "+ t.source.stateNum +", on: "+ t.value);
-
                                     visited.push(currentState.stateNum);
                                     visitedMap.set(t.source.stateNum, visited) 
                                 }
-                            
-                            })
-
-                            //exhausted all of the search on that state
-                            if(found == false )
-                                isStuck = true                             
-                            
-                            if(pathsLeft == false)
-                            {
-                                stack.pop();
-                                stack.pop();
                             }
+                        
+                        })
 
-                        }     
+                        //exhausted all of the search on that state
+                        if(found == false )
+                            isStuck = true                             
+                        
+                        if(pathsLeft == false)
+                        {
+                            stack.pop();
+                            stack.pop();
+                        }
+                    } 
 
+                    counter++;
+                    incremented = true;
                 }
+
             })
+            if(incremented == false)
+                counter++;            
         }
 
         if(currentState.isAcceptState == true && isStuck == false)
