@@ -42,9 +42,9 @@ class FSM {
         console.log("deterministic");
         var isStuck = false; //flag to see if transition is stuck
         var currentState = this.getStartState(); //get Q0
-        var index = 0;
+        var counter = 0;
        
-        while(index < input.length)
+        while(counter < input.length)
         {
             var incremented = false;
             var flag = 0;
@@ -53,9 +53,9 @@ class FSM {
                 var arr = e.value.split(",");
 
                 //make sure that a transitiion exists given the current input
-                if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(index)) )
+                if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(counter)) )
                 {         
-                    index++;  
+                    counter++;  
                     incremented = true;         
                     flag = 1;
                     console.log("moved to: "+e.destination.stateNum+ ", from: "+ e.source.stateNum +", on: "+ e.value);
@@ -91,30 +91,35 @@ class FSM {
         var currentState = this.getStartState(); 
         var accepted = false;
         var isStuck = false;
+        var counter = 0;
 
-        for(var i=0; i<input.length; i++)
+        while(counter < input.length)
         {
+            var incremented = false;
             var flag = 0;
+
             this.transitionMap.forEach(e => {
                 var arr = e.value.split(',');
             
-                if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(i)) )
+                if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(counter)) )
                 {
-
                     flag = 1;
+                    incremented = true;
+    
 
                     //has no alternative paths, move to next state
-                    if(this.hasMultiplePaths(currentState, input.charAt(i)) == 0){
+                    if(this.hasMultiplePaths(currentState, input.charAt(counter)) == 0){
                         currentState = e.destination;
+                        //console.log(this.hasMultiplePaths(currentState,input.charAt(counter)));
                         console.log("moved to: "+e.destination.stateNum+ ", from: "+ e.source.stateNum +", on: "+ e.value);
-                        console.log(input.charAt(i));
+                        console.log(input.charAt(counter));
                     }
                     
                     //has an alternative path, choose a state and add state to visited
                     else{
-                        var paths = this.hasMultiplePaths(currentState, input.charAt(i));
+                        var paths = this.hasMultiplePaths(currentState, input.charAt(counter));
                         stack.push(e);
-                        indexStack.push(i);
+                        indexStack.push(counter);
                         
                         //if state has not been visited, add it to map
                         if(visitedMap.get(e.source.stateNum) == undefined)
@@ -139,7 +144,7 @@ class FSM {
                                 var arr2 = t.value.split(',');
 
                                 //check if next state has not been explored yet
-                                if(currentState.stateNum == t.source.stateNum && arr2.includes(input.charAt(i)) && temp.includes(t.source.stateNum) != true) 
+                                if(currentState.stateNum == t.source.stateNum && arr2.includes(input.charAt(counter)) && temp.includes(t.source.stateNum) != true) 
                                 {
                                     currentState = t.destination;
                                     console.log("moved to: "+t.destination.stateNum+ ", from: "+ t.source.stateNum +", on: "+ t.value);
@@ -152,15 +157,18 @@ class FSM {
                             })
                         }    
                     }
+                    counter++;
                 }
             })
+
+            if(incremented == false)
+                counter++;
 
             //make sure it has read the whole string
             if(flag == 0){
                 isStuck = true;
                 console.log("isstuck: ",isStuck);
-            }
-            
+            }     
         }
 
         console.log(currentState.isAcceptState, currentState.stateNum)
@@ -169,6 +177,9 @@ class FSM {
         {
             accepted = true;
         }
+
+        stack.print();
+        indexStack.print();
 
         //if language is not acepted on the first run, the loop through it again
         if(accepted == false)
@@ -205,7 +216,7 @@ class FSM {
                 if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(counter)))
                 { 
 
-                    if(this.hasMultiplePaths(currentState, input.charAt(i) != 0 && state.source.stateNum  != currentState.stateNum ))
+                    if(this.hasMultiplePaths(currentState, input.charAt(counter) != 0 && state.source.stateNum  != currentState.stateNum ))
                     {
                         stack.push(e);
                         indexStack.push(counter);
@@ -236,7 +247,7 @@ class FSM {
                         this.transitionMap.forEach(t => {
                             var arr2 = t.value.split(',');
 
-                            if(currentState.stateNum == t.source.stateNum && arr2.includes(input.charAt(i)) && visited.includes(t.destination.stateNum) != true) 
+                            if(currentState.stateNum == t.source.stateNum && arr2.includes(input.charAt(counter)) && visited.includes(t.destination.stateNum) != true) 
                             {
                                 found = true; 
                                 currentState = t.destination;
@@ -294,8 +305,8 @@ class FSM {
 
 
         if(found > 1)
-             return paths;  
-        else 
+            return paths;  
+        else if(found <= 1 )
             return 0;   
     }
 
