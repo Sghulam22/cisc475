@@ -194,5 +194,21 @@ function clear_canvas()
     transitionArray = []; //array that stores transition informations
     canvas.clear();
 }
+function showControls()
+{
+ var newLine = "\r\n"
+ var msg = "Double Click - Add state"
+ msg += newLine;
+ msg += "Shift + Click two states - Creates a transition from first state clicked to second";
+ msg += newLine;
+ msg += "Ctrl + Click a state - Converts to accept state";
+ msg+= newLine;
+ msg += "Click a state - Shows all adjusters for that state";
+ msg += newLine;
+ msg += "Click transition text - Allows you to drag text";
+ msg += newLine;
+ msg += "Ctrl + click transition text - Opens prompt to edit text";
+ alert(msg);
+}
 
 //#endregion

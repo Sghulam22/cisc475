@@ -252,7 +252,7 @@ class FSM {
                     incremented = true;
                 }
             });
-            
+
             if(incremented == false)
                 counter++;            
         }
@@ -302,22 +302,18 @@ class FSM {
 
     showSuccess()
     {
-        $("#"+this.resultDisplay.id).stop().fadeIn();
         this.resultDisplay.innerHTML = "The language was accepted";
         this.resultDisplay.style.fontWeight = "bold";
         this.resultDisplay.style.color = "#00cc66";
-        $("#"+this.resultDisplay.id).fadeIn(100);
-        $("#"+this.resultDisplay.id).delay(5000).fadeOut("fast");
+        $("#"+this.resultDisplay.id).fadeIn(100).delay(2000).fadeOut("fast");
     }
 
 
     showFailure()
     {
-        $("#"+this.resultDisplay.id).stop().fadeIsn();
         this.resultDisplay.innerHTML = "The language was NOT accepted";
         this.resultDisplay.style.fontWeight = "bold";
         this.resultDisplay.style.color = "#d92638";
-        $("#"+this.resultDisplay.id).fadeIn(100);
-        $("#"+this.resultDisplay.id).delay(5000).fadeOut("fast");;
+        $("#"+this.resultDisplay.id).fadeIn(100).delay(2000).fadeOut("fast");
     }
 }
