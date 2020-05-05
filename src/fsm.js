@@ -42,26 +42,39 @@ class FSM {
         console.log("deterministic");
         var isStuck = false; //flag to see if transition is stuck
         var currentState = this.getStartState(); //get Q0
+        var index = 0;
        
-        for(var i=0; i<input.length; i++)
+        while(index < input.length)
         {
+            var incremented = false;
             var flag = 0;
 
             this.transitionMap.forEach(e => {
                 var arr = e.value.split(",");
 
                 //make sure that a transitiion exists given the current input
-                if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(i)) )
-                {                    
+                if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(index)) )
+                {         
+                    index++;  
+                    incremented = true;         
                     flag = 1;
                     console.log("moved to: "+e.destination.stateNum+ ", from: "+ e.source.stateNum +", on: "+ e.value);
                     currentState = e.destination; 
                 }
+
+                else{
+                    console.log("notfound")
+                }
             });
+
+            if(incremented == false)
+                counter++;
 
             if(flag == 0)
                 isStuck = true;
         }
+
+        console.log(currentState.isAcceptState, isStuck);
 
         if(currentState.isAcceptState && isStuck == false)
             this.showSuccess();
