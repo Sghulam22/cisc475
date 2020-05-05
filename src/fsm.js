@@ -36,6 +36,7 @@ class FSM {
             this.runDFSM(input);
     }
 
+    //function that checks the language in a deterministic machine
     runDFSM(input)
     {          
         console.log("deterministic");
@@ -49,6 +50,7 @@ class FSM {
             this.transitionMap.forEach(e => {
                 var arr = e.value.split(",");
 
+                //make sure that a transitiion exists given the current input
                 if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(i)) )
                 {                    
                     flag = 1;
@@ -66,14 +68,14 @@ class FSM {
         else if(!currentState.isAcceptState || isStuck == true)    
             this.showFailure();
     }
-    
 
+    //function that gets called if the machine is non-deterministic
     runNDFSM(input)
     {
-        var stack = new Stack();
-        var indexStack = new Stack();
-        var visitedMap = new Map();
-        var currentState = this.getStartState();
+        var stack = new Stack(); //stack to store states that have alternative paths
+        var indexStack = new Stack(); //stack that stores the index of the language at the state
+        var visitedMap = new Map(); //map that keeps history of explored paths 
+        var currentState = this.getStartState(); 
         var accepted = false;
         var isStuck = false;
 
@@ -87,6 +89,7 @@ class FSM {
                 {
 
                     flag = 1;
+
                     //has no alternative paths, move to next state
                     if(this.hasMultiplePaths(currentState, input.charAt(i)) == 0){
                         currentState = e.destination;
@@ -178,10 +181,7 @@ class FSM {
         var pathsLeft = false;
         var isStuck = false;
         var counter = index;
-        // stack.print();
-        // indexStack.print();
-
-
+    
         while(counter < input.length)
         {
             var incremented = false;
@@ -190,21 +190,16 @@ class FSM {
                 var arr = e.value.split(',');
 
                 if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(counter)))
-                {
-                    
-                    console.log("passed index is: ",index)
-                    console.log(arr)
-                    console.log("index is: ",counter);
-                    console.log("input:" ,charAt(counter))
-                    console.log("currstate:",currentState.stateNum,"eval:",e.value)
-                    // if(this.hasMultiplePaths(currentState, input.charAt(i) != 0 && state.source.stateNum  != currentState.stateNum ))
-                    // {
-                    //     stack.push(e);
-                    //     indexStack.push(i);
+                { 
 
-                    //     pathsLeft = true;
-                    // }
+                    if(this.hasMultiplePaths(currentState, input.charAt(i) != 0 && state.source.stateNum  != currentState.stateNum ))
+                    {
+                        stack.push(e);
+                        indexStack.push(counter);
+                        pathsLeft = true;
+                    }
 
+                    //if state has never been explored, then store it in the map
                     if(visitedMap.get(e.source.stateNum) == undefined)
                     {
                         if(e.source.stateNum != e.destination.stateNum)
@@ -215,14 +210,16 @@ class FSM {
                         }
 
                         currentState = e.destination;
-                        console.log("moved to: "+e.destination.stateNum+ ", from: "+ e.source.stateNum +", on: "+ e.value);
+                        console.log("moved from: "+ e.source.stateNum + ", to: "+ e.destination.stateNum +", on: "+ e.value);
                         console.log(counter);
                     }
                     
+                    //if already visited, store the next visited state in the map and make sure next state has not been already explored
                     else
                     {
-                        var visited = visitedMap.get(e.source.stateNum);
+                        var visited = visitedMap.get(e.source.stateNum); //get all the states already visited from the current state
                         var found = false;
+
                         this.transitionMap.forEach(t => {
                             var arr2 = t.value.split(',');
 
@@ -230,7 +227,7 @@ class FSM {
                             {
                                 found = true; 
                                 currentState = t.destination;
-                                console.log("moved to: "+t.destination.stateNum+ ", from: "+ t.source.stateNum +", on: "+ t.value);
+                                console.log("moved from: "+ t.source.stateNum + ", to: "+ t.destination.stateNum +", on: "+ t.value);
                                 
                                 if(e.source.stateNum != e.destination.stateNum)
                                 {
@@ -238,11 +235,10 @@ class FSM {
                                     visitedMap.set(t.source.stateNum, visited) 
                                 }
                             }
-                        
                         })
 
                         //exhausted all of the search on that state
-                        if(found == false )
+                        if(found == false)
                             isStuck = true                             
                         
                         if(pathsLeft == false)
@@ -255,8 +251,8 @@ class FSM {
                     counter++;
                     incremented = true;
                 }
-
-            })
+            });
+            
             if(incremented == false)
                 counter++;            
         }
@@ -268,7 +264,7 @@ class FSM {
 
     }
 
-    //check if machine is nondeterministic
+    //check if machine has alternative paths
     hasMultiplePaths(currentState, input)
     {
         var found = 0;
@@ -285,7 +281,7 @@ class FSM {
 
 
         if(found > 1)
-             return 1;  
+             return paths;  
         else 
             return 0;   
     }
@@ -317,7 +313,7 @@ class FSM {
 
     showFailure()
     {
-        $("#"+this.resultDisplay.id).stop().fadeIn();
+        $("#"+this.resultDisplay.id).stop().fadeIsn();
         this.resultDisplay.innerHTML = "The language was NOT accepted";
         this.resultDisplay.style.fontWeight = "bold";
         this.resultDisplay.style.color = "#d92638";
