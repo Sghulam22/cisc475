@@ -1,6 +1,7 @@
 
 var canvas = new FSMCanvas('canvas');
 var fsm = new FSM(canvas.transitionMap);
+
 fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
 
 var transitionArray = [];
@@ -215,7 +216,9 @@ function loadJsonFile() {
     return;
   }
 
+  
   input = document.getElementById('fileinput');
+
   if (!input) {
     alert(" couldn't find the fileinput element.");
   }
@@ -234,10 +237,47 @@ function loadJsonFile() {
 
   function receivedText(e) {
     let lines = e.target.result;
-    var newArr = JSON.parse(lines); 
-    canvas.loadFromJSON(newArr, canvas.renderAll.bind(canvas));
+    //var newArr = JSON.parse(lines); 
+    canvas.loadFromJSON(lines, canvas.renderAll.bind(canvas));
   }
-}//end of JSON file load function
+}
+
+//end of JSON file load function
+
+/*function loadCanvasWithInputFile(){
+	// canvas
+	//var canvas = document.getElementById('myCanvas');
+	var context = canvas.getContext("2d"); 
+	var fileinput = document.getElementById('fileinput'); // input file
+	var img = new Image();
+
+	fileinput.onchange = function(evt) {
+	    var files = evt.target.files; // FileList object
+	    var file = files[0];
+	    if(file.type.match('image.*')) {
+	        var reader = new FileReader();
+	        // Read in the image file as a data URL.
+          reader.readAsDataURL(file);
+          reader.onload = receiveImage;
+	    	  /*reader.onload = function(evt){
+	    		//if( evt.target.readyState == FileReader.DONE) {
+	    			img.src = evt.target.result;
+            img.onload = () => context.drawImage(img, 100, 100);
+			//}
+        }
+        
+        function receiveImage(e){
+          img.src = e.target.result;
+          context.drawImage(img, 100, 100);
+        }
+
+	    } else {
+	        alert("not an image");
+	    }
+	};
+}*/
+
+
 
 //#endregion
 
