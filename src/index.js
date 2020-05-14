@@ -72,7 +72,7 @@ function onBeforeSelectionCleared(e, selectionUpdated)
 
 function onObjectSelected(e) {
 
-    isObjectSelected = true; 
+    isObjectSelected = true;
     var activeObject = e.target;
     var isNewTransition = false;
 
@@ -141,6 +141,18 @@ function onObjectMoving(e) {
   {
     activeObject.line.path[1][1] = activeObject.left;
     activeObject.line.path[1][2] = activeObject.top;
+    //code below updates text and arrow to centroid of state positions and control point for curve
+    var key = activeObject.name.slice(2);
+    var tran = canvas.transitionMap.get(key);
+    var x = (activeObject.line.path[0][1]+activeObject.line.path[1][1]+activeObject.line.path[1][3])/3
+    var y = (activeObject.line.path[0][2]+activeObject.line.path[1][2]+activeObject.line.path[1][4])/3
+    tran.text.left = x;
+    tran.text.top = y;
+    tran.directionArrow.left = x;
+    tran.directionArrow.top =  y;
+    tran.text.setCoords();
+    tran.directionArrow.setCoords();
+    canvas.renderAll();
   }
 }
 
@@ -160,7 +172,7 @@ function handle_delete()
 
 function runMachine()
 {
-  var input = window.prompt("enter a language", "");
+  var input = window.prompt("enter a string to check if it's in the language", "");
   fsm.runAutomata(input);
 }
 
