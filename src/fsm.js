@@ -209,12 +209,15 @@ class FSM {
         while(counter < input.length)
         {
             var incremented = false;
+            var flag = false;
+            var found = false;
 
             this.transitionMap.forEach(e => {
                 var arr = e.value.split(',');
 
                 if( currentState.stateNum == e.source.stateNum && arr.includes(input.charAt(counter)))
-                { 
+                {  
+                    found = true;  
 
                     if(this.hasMultiplePaths(currentState, input.charAt(counter) != 0 && state.source.stateNum  != currentState.stateNum ))
                     {
@@ -242,14 +245,16 @@ class FSM {
                     else
                     {
                         var visited = visitedMap.get(e.source.stateNum); //get all the states already visited from the current state
-                        var found = false;
+                        var flag = false;
 
                         this.transitionMap.forEach(t => {
                             var arr2 = t.value.split(',');
 
                             if(currentState.stateNum == t.source.stateNum && arr2.includes(input.charAt(counter)) && visited.includes(t.destination.stateNum) != true) 
                             {
-                                found = true; 
+                                counter++;
+                                incremented = true;
+                                flag = true; 
                                 currentState = t.destination;
                                 console.log("moved from: "+ t.source.stateNum + ", to: "+ t.destination.stateNum +", on: "+ t.value);
                                 
@@ -258,24 +263,18 @@ class FSM {
                                     visited.push(currentState.stateNum);
                                     visitedMap.set(t.source.stateNum, visited) 
                                 }
+
+                                counter++;  
+                                incremented = true;  
                             }
-                        })
+                        }) 
 
-                        //exhausted all of the search on that state
-                        if(found == false)
-                            isStuck = true                             
-                        
-                        if(pathsLeft == false)
-                        {
-                            stack.pop();
-                            stack.pop();
-                        }
-                    } 
+                       // if(flag == false)
+                    }
 
-                    counter++;
-                    incremented = true;
                 }
-            });
+            }); 
+        
 
             if(incremented == false)
                 counter++;            
@@ -285,7 +284,6 @@ class FSM {
             return true;
         else
             return false;
-
     }
 
     //check if machine has alternative paths
