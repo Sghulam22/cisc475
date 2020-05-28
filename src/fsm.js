@@ -167,8 +167,8 @@ class FSM {
             //make sure it has read the whole string
             if(flag == 0){
                 isStuck = true;
-                console.log("isstuck: ",isStuck);
-            }     
+                console.log("isstuck: ", isStuck);
+            }    
         }
 
         console.log(currentState.isAcceptState, currentState.stateNum)
@@ -205,6 +205,8 @@ class FSM {
         var pathsLeft = false;
         var isStuck = false;
         var counter = index;
+
+        console.log(input, index);
     
         while(counter < input.length)
         {
@@ -219,12 +221,12 @@ class FSM {
                 {  
                     found = true;  
 
-                    if(this.hasMultiplePaths(currentState, input.charAt(counter) != 0 && state.source.stateNum  != currentState.stateNum ))
-                    {
-                        stack.push(e);
-                        indexStack.push(counter);
-                        pathsLeft = true;
-                    }
+                    // if(this.hasMultiplePaths(currentState, input.charAt(counter) != 0 && state.source.stateNum  != currentState.stateNum ))
+                    // {
+                    //     stack.push(e);
+                    //     indexStack.push(counter);
+                    //     pathsLeft = true;
+                    // }
 
                     //if state has never been explored, then store it in the map
                     if(visitedMap.get(e.source.stateNum) == undefined)
@@ -257,7 +259,7 @@ class FSM {
                                 flag = true; 
                                 currentState = t.destination;
                                 console.log("moved from: "+ t.source.stateNum + ", to: "+ t.destination.stateNum +", on: "+ t.value);
-                                
+                                console.log(counter);
                                 if(e.source.stateNum != e.destination.stateNum)
                                 {
                                     visited.push(currentState.stateNum);
@@ -268,8 +270,12 @@ class FSM {
                                 incremented = true;  
                             }
                         }) 
+                      
+                    }
 
-                       // if(flag == false)
+                    if(flag == false){
+                        stack.pop();
+                        indexStack.pop();
                     }
 
                 }
